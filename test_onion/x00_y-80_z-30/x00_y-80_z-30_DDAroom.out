@@ -1,0 +1,429 @@
+>DDSCAT using parameter file #  1 =
+ddscat.par
+>DDSCAT NUMPROC=   1                                                          
+>DDSCAT --- DDSCAT 7.3.2 [18.08.29]   
+>DDSCAT     VERSNUM=   732
+>DDSCAT     Double-precision version                                          
+>REAPAR  ========== Parameter file for v7.3 ===================               
+>  **** Preliminaries ****                                               
+>REAPAR NOTORQ - do not compute torques                                       
+>REAPAR PBCGS2 - CCG Method                                                   
+>REAPAR GPFAFT - using GPFA package from Clive Temperton                      
+>REAPAR GKDLDR - Gutkowicz-Krusin & Draine (2004) LDR for alpha
+>REAPAR NOTBIN - Unformatted binary dump option                               
+>REAPAR **** Initial Memory Allocation ****                                   
+>REAPAR allow MXNX,MXNY,MXNZ=    30    50    30 for target generation         
+>REAPAR **** Target Geometry and Composition ****                             
+>REAPAR FROM_FILE - Shape definition                                          
+>REAPAR  NCOMP=   1                                                           
+>REAPAR comp  1 : /gscratch/chem/clairew4/dielectrics/au_Conor_0K.txt         
+>REAPAR **** Additional Nearfield calculation? ****                           
+>REAPAR  0 = NRFLD : nearfield calculation not desired                        
+>REAPAR  0.000 0.000 0.000 0.000 0.000 0.000                                  
+>REAPAR  fractional extension in -x,+x,-y,+y,-z,+z directions                 
+>REAPAR **** Error Tolerance ****                                             
+>REAPAR  1.000E-05 = TOL = max. acceptable normalized residual |Ax-E|/|E|     
+>REAPAR **** Maximum number of iterations ****                                
+>REAPAR       2370 = MXITER                                                   
+>  **** Integration cutoff parameter for PBC calculations ****           
+>REAPAR [GAMMA is not used in present (non-PBC) calculation]                  
+>  **** Angular resolution for calculation of <cos>, etc. ****           
+>REAPAR  0.5000 = ETASCA (parameter controlling number of scattering angles   
+>  **** Vacuum wavelengths (micron) ****                                 
+>REAPAR   1 wavelengths from  0.6000 to  0.6000                               
+>DIVIDE  Only one element initialized 
+>  **** Refractive index of ambient medium                               
+>REAPAR  1.4730 = NAMBIENT = refractive index of ambient medium               
+>  **** Effective Radii (micron) ****                                    
+>REAPAR   1 eff. radii from  0.0313 to  0.0313                                
+>DIVIDE  Only one element initialized 
+>  **** Define Incident Polarizations ****                               
+>REAPAR IORTH= 1                                                              
+>REAPAR **** Specify which output files to write ****                         
+>REAPAR IWRKSC= 0                                                             
+>  **** Specify Target Rotations ****                                    
+>  **** Specify first IWAV, IRAD, IORI (normally 0 0 0) ****             
+>REAPAR Calculate only for single polarization 
+>REAPAR    0.00   0.00 Range of BETA values ; NBETA =   1                     
+>REAPAR    0.00   0.00 Range of THETA values; NTHETA=   1                     
+>REAPAR    0.00   0.00 Range of PHI values ;   NPHI =   1                     
+>  **** Select Elements of S_ij Matrix to Print ****                     
+>REAPAR CMDFRM=LFRAME : scattering directions given in Lab Frame              
+>REAPAR **** Specify Scattered Directions ****                                
+>REAPAR  -180.0    0.0   35.0 = phi, theta_min, theta_max for scatt. plane   1
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR  -176.4    0.0   35.0 = phi, theta_min, theta_max for scatt. plane   2
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR  -172.7    0.0   35.0 = phi, theta_min, theta_max for scatt. plane   3
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR  -169.1    0.0   35.0 = phi, theta_min, theta_max for scatt. plane   4
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR  -165.5    0.0   35.0 = phi, theta_min, theta_max for scatt. plane   5
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR  -161.8    0.0   35.0 = phi, theta_min, theta_max for scatt. plane   6
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR  -158.2    0.0   35.0 = phi, theta_min, theta_max for scatt. plane   7
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR  -154.5    0.0   35.0 = phi, theta_min, theta_max for scatt. plane   8
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR  -150.9    0.0   35.0 = phi, theta_min, theta_max for scatt. plane   9
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR  -147.3    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  10
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR  -143.6    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  11
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR  -140.0    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  12
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR  -136.4    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  13
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR  -132.7    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  14
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR  -129.1    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  15
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR  -125.5    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  16
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR  -121.8    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  17
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR  -118.2    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  18
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR  -114.5    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  19
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR  -110.9    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  20
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR  -107.3    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  21
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR  -103.6    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  22
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR  -100.0    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  23
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   -96.4    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  24
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   -92.7    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  25
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   -89.1    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  26
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   -85.5    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  27
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   -81.8    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  28
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   -78.2    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  29
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   -74.5    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  30
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   -70.9    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  31
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   -67.3    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  32
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   -63.6    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  33
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   -60.0    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  34
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   -56.4    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  35
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   -52.7    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  36
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   -49.1    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  37
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   -45.5    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  38
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   -41.8    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  39
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   -38.2    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  40
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   -34.5    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  41
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   -30.9    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  42
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   -27.3    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  43
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   -23.6    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  44
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   -20.0    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  45
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   -16.4    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  46
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   -12.7    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  47
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR    -9.1    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  48
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR    -5.5    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  49
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR    -1.8    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  50
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR     1.8    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  51
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR     5.5    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  52
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR     9.1    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  53
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR    12.7    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  54
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR    16.4    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  55
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR    20.0    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  56
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR    23.6    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  57
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR    27.3    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  58
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR    30.9    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  59
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR    34.5    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  60
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR    38.2    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  61
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR    41.8    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  62
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR    45.5    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  63
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR    49.1    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  64
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR    52.7    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  65
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR    56.4    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  66
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR    60.0    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  67
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR    63.6    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  68
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR    67.3    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  69
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR    70.9    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  70
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR    74.5    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  71
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR    78.2    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  72
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR    81.8    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  73
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR    85.5    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  74
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR    89.1    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  75
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR    92.7    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  76
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR    96.4    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  77
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   100.0    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  78
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   103.6    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  79
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   107.3    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  80
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   110.9    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  81
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   114.5    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  82
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   118.2    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  83
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   121.8    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  84
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   125.5    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  85
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   129.1    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  86
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   132.7    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  87
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   136.4    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  88
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   140.0    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  89
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   143.6    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  90
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   147.3    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  91
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   150.9    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  92
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   154.5    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  93
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   158.2    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  94
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   161.8    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  95
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   165.5    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  96
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   169.1    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  97
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   172.7    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  98
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   176.4    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  99
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   180.0    0.0   35.0 = phi, theta_min, theta_max for scatt. plane 100
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>DDSCAT Allocate memory for first call to TARGET...                           
+>DDSCAT allocating     0.26 MB for IXYZ0;  total=    40.22 MB                 
+>DDSCAT allocating     0.26 MB for ICOMP;  total=    40.47 MB                 
+>DDSCAT allocating     0.09 MB for IOCC;   total=    40.56 MB                 
+>DDSCAT allocating     0.26 MB for ISCR1;  total=    40.82 MB                 
+>DDSCAT allocating     0.34 MB for BETADF; total=    41.16 MB                 
+>DDSCAT allocating     0.34 MB for PHIDF;  total=    41.50 MB                 
+>DDSCAT allocating     0.34 MB for THETADF;total=    41.85 MB                 
+>DDSCAT allocating     0.34 MB for SCRRS2; total=    42.19 MB                 
+>REASHP about to open shape file=
+>REASHP shape.dat                                                                       
+>REASHP completed reading target file=
+>REASHP shape.dat                                                                       
+>REASHP  requires  1 different refractive index files                         
+>REASHP  requires  1 different refractive index files                         
+>TARGET: Sphere shape                                                      
+          16061 = NAT0 = number of dipoles in target
+>TARGET  NCOMP_NEED=   1 compositions in target                               
+>DDSCAT returned from TARGET:                                                 
+>DDSCAT : dimensions of physical target                                       
+>DDSCAT    -21    -1 = min, max values of JX                                  
+>DDSCAT   -100   -60 = min, max values of JY                                  
+>DDSCAT    -25    -5 = min, max values of JZ                                  
+>DDSCAT    0.00000   0.00000   0.00000 = X0(1-3)                              
+>DDSCAT  --- physical extent of target volume (occupied sites) ---            
+>DDSCAT    -21.50000    -0.50000 = min, max values of x/d                     
+>DDSCAT   -100.50000   -59.50000 = min, max values of y/d                     
+>DDSCAT    -25.50000    -4.50000 = min, max values of z/d                     
+>EXTEND target extent in x,y,z directions =   21,   41,   21 (in Target Frame)
+>DDSCAT returned from EXTEND:                                                 
+>DDSCAT      1    21 = min, max values of JX                                  
+>DDSCAT      1    41 = min, max values of JY                                  
+>DDSCAT      1    21 = min, max values of JZ                                  
+>DDSCAT  ------- physical extent of target volume -------                     
+>DDSCAT    -21.50000    -0.50000 = min, max values of x/d                     
+>DDSCAT   -100.50000   -59.50000 = min, max values of y/d                     
+>DDSCAT    -25.50000    -4.50000 = min, max values of z/d                     
+>DDSCAT Allocate memory required for this problem...                          
+>DDSCAT allocating     0.15 MB for ISCR1;  total=    40.11 MB                 
+>DDSCAT allocating     0.20 MB for SCRRS2; total=    40.31 MB                 
+>DDSCAT allocating     0.09 MB for IXYZ0;  total=    40.40 MB                 
+>DDSCAT allocating     0.15 MB for ICOMP;  total=    40.55 MB                 
+>DDSCAT allocating     0.05 MB for IOCC;   total=    40.59 MB                 
+>DDSCAT allocating     0.12 MB for BETADF; total=    40.72 MB                 
+>DDSCAT allocating     0.12 MB for PHIDF;  total=    40.84 MB                 
+>DDSCAT allocating     0.12 MB for THETADF;total=    40.96 MB                 
+>DDSCAT allocating     1.19 MB for CXADIA; total=    42.15 MB                 
+>DDSCAT allocating    18.98 MB for CXZC;   total=    61.13 MB                 
+>DDSCAT allocating     9.49 MB for CXZW;   total=    70.63 MB                 
+>DDSCAT allocating     1.19 MB for CXAOFF; total=    71.81 MB                 
+>DDSCAT allocating     1.19 MB for CXALOF; total=    73.00 MB                 
+>DDSCAT allocating     1.19 MB for CXALPH; total=    74.18 MB                 
+>DDSCAT allocating     1.19 MB for CXE_TF; total=    75.37 MB                 
+>DDSCAT allocating    11.87 MB for CXSC  ; total=    87.24 MB                 
+>DDSCAT allocating     1.19 MB for CXSCR1; total=    88.42 MB                 
+>DDSCAT allocating     1.19 MB for CXXI;   total=    89.61 MB                 
+>DDSCAT allocating     0.59 MB for SCRRS1; total=    90.20 MB                 
+>DDSCAT                 Total memory allocation =    90.20 MB                 
+         25920 = NAT  = number of lattice sites in extended target
+         24  45  24 = x,y,z length of extended target (Targ. Frame)
+>DIELEC about to read file =                                                  
+>DIELEC /gscratch/chem/clairew4/dielectrics/au_Conor_0K.txt         
+>DIELEC Refractive index of gold at 0K (Made on 11-06-19                      
+>DIELEC  completed reading file =                                             
+>DIELEC /gscratch/chem/clairew4/dielectrics/au_Conor_0K.txt         
+>DDSCAT m= (   0.19864 ,   3.17514), epsilon= ( -10.04205 ,    1.26143) :material 1 1
+>DDSCAT    0.031300 = AEFF = effective radius (physical units)
+>DDSCAT    0.063891 = d/aeff for this target
+>DDSCAT    0.600000 = WAVE = wavelength in vacuo (physical units)
+>DDSCAT    0.407332 = wavelength in ambient medium (phys. units)
+>DDSCAT    0.482809 = k_amb*aeff = 2*pi*aeff/lambda_amb
+>DDSCAT    0.030847 = k_amb*d
+>ROTATE       a_1 in TF:  1.00000000  0.00000000  0.00000000                  
+>ROTATE       a_2 in TF:  0.00000000  1.00000000  0.00000000                  
+>ROTATE       a_3 in TF:  0.00000000  0.00000000  1.00000000                  
+>ROTATE      x_LF in TF:  1.00000000  0.00000000  0.00000000                  
+>ROTATE      y_LF in TF:  0.00000000  1.00000000  0.00000000                  
+>ROTATE      z_LF in TF:  0.00000000  0.00000000  1.00000000                  
+>ROTATE n0=x_LF dot a_1=  1.00000000                                          
+>ROTATE n0=x_LF dot a_2=  0.00000000                                          
+>ROTATE n0=x_LF dot a_3=  0.00000000                                          
+>ROTATE    y_LF dot a_1=  0.00000000                                          
+>ROTATE    y_LF dot a_2=  1.00000000                                          
+>ROTATE    y_LF dot a_3=  0.00000000                                          
+>ROTATE    z_LF dot a_1=  0.00000000                                          
+>ROTATE    z_LF dot a_2=  0.00000000                                          
+>ROTATE    z_LF dot a_3=  1.00000000                                          
+>ALPHA  GKDLDR Lattice dispersion relation for |m|k_0d= 0.0666                
+>DIRECT_CALC Estimated total cputime required by DIRECT_CALC=    0.03 cpu-sec  
+>DIRECT_CALC cputime is independent of gamma                                   
+>DIRECT_CALC Actual cputime to complete DIRECT_CALC=    0.00 cpu-sec           
+>ZBCG2  IT=       1 f.err= 4.852E-01                                          
+>ZBCG2  IT=       2 f.err= 5.919E-01                                          
+>ZBCG2  IT=       3 f.err= 1.016E-01                                          
+>ZBCG2  IT=       4 f.err= 2.124E-01                                          
+>ZBCG2  IT=       5 f.err= 1.096E-01                                          
+>ZBCG2  IT=       6 f.err= 6.948E-02                                          
+>ZBCG2  IT=       7 f.err= 1.624E-01                                          
+>ZBCG2  IT=       8 f.err= 5.795E-02                                          
+>ZBCG2  IT=       9 f.err= 4.953E-02                                          
+>ZBCG2  IT=      10 f.err= 1.050E-01                                          
+>ZBCG2  IT=      11 f.err= 3.419E-02                                          
+>ZBCG2  IT=      12 f.err= 3.941E-02                                          
+>ZBCG2  IT=      13 f.err= 5.393E-02                                          
+>ZBCG2  IT=      14 f.err= 2.738E-02                                          
+>ZBCG2  IT=      15 f.err= 2.977E-02                                          
+>ZBCG2  IT=      16 f.err= 2.823E-02                                          
+>ZBCG2  IT=      17 f.err= 2.027E-02                                          
+>ZBCG2  IT=      18 f.err= 3.026E-02                                          
+>ZBCG2  IT=      19 f.err= 1.734E-02                                          
+>ZBCG2  IT=      20 f.err= 1.285E-02                                          
+>ZBCG2  IT=      21 f.err= 1.694E-02                                          
+>ZBCG2  IT=      22 f.err= 1.058E-02                                          
+>ZBCG2  IT=      23 f.err= 1.169E-02                                          
+>ZBCG2  IT=      24 f.err= 6.888E-03                                          
+>ZBCG2  IT=      25 f.err= 5.304E-03                                          
+>ZBCG2  IT=      26 f.err= 5.158E-03                                          
+>ZBCG2  IT=      27 f.err= 4.656E-03                                          
+>ZBCG2  IT=      28 f.err= 3.691E-03                                          
+>ZBCG2  IT=      29 f.err= 3.314E-03                                          
+>ZBCG2  IT=      30 f.err= 2.549E-03                                          
+>ZBCG2  IT=      31 f.err= 2.451E-03                                          
+>ZBCG2  IT=      32 f.err= 2.201E-03                                          
+>ZBCG2  IT=      33 f.err= 1.996E-03                                          
+>ZBCG2  IT=      34 f.err= 1.589E-03                                          
+>ZBCG2  IT=      35 f.err= 1.291E-03                                          
+>ZBCG2  IT=      36 f.err= 1.151E-03                                          
+>ZBCG2  IT=      37 f.err= 9.306E-04                                          
+>ZBCG2  IT=      38 f.err= 1.376E-03                                          
+>ZBCG2  IT=      39 f.err= 7.708E-04                                          
+>ZBCG2  IT=      40 f.err= 6.135E-04                                          
+>ZBCG2  IT=      41 f.err= 5.114E-04                                          
+>ZBCG2  IT=      42 f.err= 4.831E-04                                          
+>ZBCG2  IT=      43 f.err= 4.444E-04                                          
+>ZBCG2  IT=      44 f.err= 3.998E-04                                          
+>ZBCG2  IT=      45 f.err= 3.484E-04                                          
+>ZBCG2  IT=      46 f.err= 3.051E-04                                          
+>ZBCG2  IT=      47 f.err= 3.414E-04                                          
+>ZBCG2  IT=      48 f.err= 2.505E-04                                          
+>ZBCG2  IT=      49 f.err= 2.585E-04                                          
+>ZBCG2  IT=      50 f.err= 2.715E-04                                          
+>ZBCG2  IT=      51 f.err= 8.484E-04                                          
+>ZBCG2  IT=      52 f.err= 2.676E-04                                          
+>ZBCG2  IT=      53 f.err= 1.901E-04                                          
+>ZBCG2  IT=      54 f.err= 1.694E-04                                          
+>ZBCG2  IT=      55 f.err= 1.073E-04                                          
+>ZBCG2  IT=      56 f.err= 9.227E-05                                          
+>ZBCG2  IT=      57 f.err= 7.007E-05                                          
+>ZBCG2  IT=      58 f.err= 6.150E-05                                          
+>ZBCG2  IT=      59 f.err= 5.808E-05                                          
+>ZBCG2  IT=      60 f.err= 4.660E-05                                          
+>ZBCG2  IT=      61 f.err= 5.018E-05                                          
+>ZBCG2  IT=      62 f.err= 3.889E-05                                          
+>ZBCG2  IT=      63 f.err= 3.032E-05                                          
+>ZBCG2  IT=      64 f.err= 2.775E-05                                          
+>ZBCG2  IT=      65 f.err= 7.238E-05                                          
+>ZBCG2  IT=      66 f.err= 2.194E-05                                          
+>ZBCG2  IT=      67 f.err= 2.584E-05                                          
+>ZBCG2  IT=      68 f.err= 1.930E-05                                          
+>ZBCG2  IT=      69 f.err= 1.415E-05                                          
+>ZBCG2  IT=      70 f.err= 1.604E-05                                          
+>ZBCG2  IT=      71 f.err= 1.221E-05                                          
+>ZBCG2  IT=      72 f.err= 1.149E-05                                          
+>ZBCG2  IT=      73 f.err= 1.341E-05                                          
+>ZBCG2  IT=      74 f.err= 1.677E-05                                          
+>ZBCG2  IT=      75 f.err= 9.114E-06                                          
+>TIMEIT  Timing results for: PBCGS2                                           
+>TIMEIT    10.194 = CPU time (sec)                                            
+>GETFML Q_abs = 8.7744E-01 Q_ext=  1.8165E+00
+>SCAT      285 scattering directions used to calculate <cos>, etc.          
+>TIMEIT  Timing results for:  SCAT                                            
+>TIMEIT     1.132 = CPU time (sec)                                            
+>DDSCAT return from DDSCAT to calling program
+>DDSCAT normal termination, with no nearfield calculation                     
+rm: cannot remove ‘temp_IXYZ0’: No such file or directory
+rm: cannot remove ‘w???r???k???.pol?’: No such file or directory
+rm: cannot remove ‘w???r???k???.E*’: No such file or directory

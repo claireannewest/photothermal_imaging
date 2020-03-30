@@ -1,0 +1,277 @@
+>DDSCAT using parameter file #  1 =
+ddscat.par
+>DDSCAT NUMPROC=   1                                                          
+>DDSCAT --- DDSCAT 7.3.2 [18.08.29]   
+>DDSCAT     VERSNUM=   732
+>DDSCAT     Double-precision version                                          
+>REAPAR  ========== Parameter file for v7.3 ===================               
+>  **** Preliminaries ****                                               
+>REAPAR NOTORQ - do not compute torques                                       
+>REAPAR PBCGS2 - CCG Method                                                   
+>REAPAR GPFAFT - using GPFA package from Clive Temperton                      
+>REAPAR GKDLDR - Gutkowicz-Krusin & Draine (2004) LDR for alpha
+>REAPAR NOTBIN - Unformatted binary dump option                               
+>REAPAR **** Initial Memory Allocation ****                                   
+>REAPAR allow MXNX,MXNY,MXNZ=    38    56    38 for target generation         
+>REAPAR **** Target Geometry and Composition ****                             
+>REAPAR FROM_FILE - Shape definition                                          
+>REAPAR  NCOMP=   2                                                           
+>REAPAR comp  1 : /gscratch/chem/clairew4/dielectrics/au_Conor_7K.txt         
+>REAPAR comp  2 : /gscratch/chem/clairew4/dielectrics/glyc_6K.txt             
+>REAPAR **** Additional Nearfield calculation? ****                           
+>REAPAR  0 = NRFLD : nearfield calculation not desired                        
+>REAPAR  0.000 0.000 0.000 0.000 0.000 0.000                                  
+>REAPAR  fractional extension in -x,+x,-y,+y,-z,+z directions                 
+>REAPAR **** Error Tolerance ****                                             
+>REAPAR  1.000E-05 = TOL = max. acceptable normalized residual |Ax-E|/|E|     
+>REAPAR **** Maximum number of iterations ****                                
+>REAPAR       2370 = MXITER                                                   
+>  **** Integration cutoff parameter for PBC calculations ****           
+>REAPAR [GAMMA is not used in present (non-PBC) calculation]                  
+>  **** Angular resolution for calculation of <cos>, etc. ****           
+>REAPAR  0.5000 = ETASCA (parameter controlling number of scattering angles   
+>  **** Vacuum wavelengths (micron) ****                                 
+>REAPAR   1 wavelengths from  0.6000 to  0.6000                               
+>DIVIDE  Only one element initialized 
+>  **** Refractive index of ambient medium                               
+>REAPAR  1.4730 = NAMBIENT = refractive index of ambient medium               
+>  **** Effective Radii (micron) ****                                    
+>REAPAR   1 eff. radii from  0.0372 to  0.0372                                
+>DIVIDE  Only one element initialized 
+>  **** Define Incident Polarizations ****                               
+>REAPAR IORTH= 1                                                              
+>REAPAR **** Specify which output files to write ****                         
+>REAPAR IWRKSC= 0                                                             
+>  **** Specify Target Rotations ****                                    
+>  **** Specify first IWAV, IRAD, IORI (normally 0 0 0) ****             
+>REAPAR Calculate only for single polarization 
+>REAPAR    0.00   0.00 Range of BETA values ; NBETA =   1                     
+>REAPAR    0.00   0.00 Range of THETA values; NTHETA=   1                     
+>REAPAR    0.00   0.00 Range of PHI values ;   NPHI =   1                     
+>  **** Select Elements of S_ij Matrix to Print ****                     
+>REAPAR CMDFRM=LFRAME : scattering directions given in Lab Frame              
+>REAPAR **** Specify Scattered Directions ****                                
+>REAPAR  -180.0    0.0   35.0 = phi, theta_min, theta_max for scatt. plane   1
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR  -176.4    0.0   35.0 = phi, theta_min, theta_max for scatt. plane   2
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR  -172.7    0.0   35.0 = phi, theta_min, theta_max for scatt. plane   3
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR  -169.1    0.0   35.0 = phi, theta_min, theta_max for scatt. plane   4
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR  -165.5    0.0   35.0 = phi, theta_min, theta_max for scatt. plane   5
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR  -161.8    0.0   35.0 = phi, theta_min, theta_max for scatt. plane   6
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR  -158.2    0.0   35.0 = phi, theta_min, theta_max for scatt. plane   7
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR  -154.5    0.0   35.0 = phi, theta_min, theta_max for scatt. plane   8
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR  -150.9    0.0   35.0 = phi, theta_min, theta_max for scatt. plane   9
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR  -147.3    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  10
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR  -143.6    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  11
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR  -140.0    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  12
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR  -136.4    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  13
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR  -132.7    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  14
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR  -129.1    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  15
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR  -125.5    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  16
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR  -121.8    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  17
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR  -118.2    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  18
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR  -114.5    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  19
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR  -110.9    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  20
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR  -107.3    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  21
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR  -103.6    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  22
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR  -100.0    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  23
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   -96.4    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  24
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   -92.7    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  25
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   -89.1    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  26
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   -85.5    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  27
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   -81.8    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  28
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   -78.2    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  29
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   -74.5    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  30
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   -70.9    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  31
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   -67.3    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  32
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   -63.6    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  33
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   -60.0    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  34
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   -56.4    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  35
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   -52.7    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  36
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   -49.1    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  37
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   -45.5    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  38
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   -41.8    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  39
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   -38.2    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  40
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   -34.5    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  41
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   -30.9    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  42
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   -27.3    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  43
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   -23.6    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  44
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   -20.0    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  45
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   -16.4    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  46
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   -12.7    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  47
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR    -9.1    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  48
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR    -5.5    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  49
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR    -1.8    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  50
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR     1.8    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  51
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR     5.5    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  52
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR     9.1    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  53
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR    12.7    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  54
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR    16.4    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  55
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR    20.0    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  56
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR    23.6    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  57
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR    27.3    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  58
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR    30.9    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  59
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR    34.5    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  60
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR    38.2    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  61
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR    41.8    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  62
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR    45.5    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  63
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR    49.1    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  64
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR    52.7    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  65
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR    56.4    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  66
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR    60.0    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  67
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR    63.6    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  68
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR    67.3    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  69
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR    70.9    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  70
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR    74.5    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  71
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR    78.2    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  72
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR    81.8    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  73
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR    85.5    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  74
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR    89.1    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  75
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR    92.7    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  76
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR    96.4    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  77
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   100.0    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  78
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   103.6    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  79
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   107.3    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  80
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   110.9    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  81
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   114.5    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  82
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   118.2    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  83
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   121.8    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  84
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   125.5    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  85
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   129.1    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  86
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   132.7    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  87
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   136.4    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  88
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   140.0    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  89
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   143.6    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  90
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   147.3    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  91
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   150.9    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  92
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   154.5    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  93
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   158.2    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  94
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   161.8    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  95
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   165.5    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  96
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   169.1    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  97
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   172.7    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  98
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   176.4    0.0   35.0 = phi, theta_min, theta_max for scatt. plane  99
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>REAPAR   180.0    0.0   35.0 = phi, theta_min, theta_max for scatt. plane 100
+>REAPAR    8 = number of scattering angles in this scattering plane           
+>DDSCAT Allocate memory for first call to TARGET...                           
+>DDSCAT allocating     0.46 MB for IXYZ0;  total=    40.42 MB                 
+>DDSCAT allocating     0.46 MB for ICOMP;  total=    40.88 MB                 
+>DDSCAT allocating     0.15 MB for IOCC;   total=    41.04 MB                 
+>DDSCAT allocating     0.46 MB for ISCR1;  total=    41.50 MB                 
+>DDSCAT allocating     0.62 MB for BETADF; total=    42.12 MB                 
+>DDSCAT allocating     0.62 MB for PHIDF;  total=    42.74 MB                 
+>DDSCAT allocating     0.62 MB for THETADF;total=    43.35 MB                 
+>DDSCAT allocating     0.62 MB for SCRRS2; total=    43.97 MB                 
+>REASHP about to open shape file=
+>REASHP shape.dat                                                                       
+>REASHP completed reading target file=
+>REASHP shape.dat                                                                       
+>REASHP  requires  3 different refractive index files                         
+>REASHP  requires  3 different refractive index files                         
+>TARGET:Shape with heated indices                                          
+          27047 = NAT0 = number of dipoles in target
+>TARGET  NCOMP_NEED=   3 compositions in target                               
+>DDSCAT returned from TARGET:                                                 
+>DDSCAT Error:NCOMP_NEED=   3 >   2 = NCOMP                                   
+
+ >>>>> FATAL ERROR IN PROCEDURE: DDSCAT
+ >>>>> NCOMP is too small
+ >>>>> EXECUTION ABORTED 
