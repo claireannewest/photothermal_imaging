@@ -1,0 +1,152 @@
+ ' ========== Parameter file for v7.3 ==================='
+ '**** Preliminaries ****'
+ 'NOTORQ' = CMTORQ*6 (DOTORQ, NOTORQ) -- either do or skip torque calculations
+ 'PBCGS2' = CMDSOL*6 (PBCGS2, PBCGST, GPBICG, QMRCCG, PETRKP) -- CCG method
+ 'GPFAFT' = CMETHD*6 (GPFAFT, FFTMKL) -- FFT method
+ 'GKDLDR' = CALPHA*6 (GKDLDR, LATTDR, FLTRCD) -- DDA method
+ 'NOTBIN' = CBINFLAG (NOTBIN, ORIBIN, ALLBIN)
+ '**** Initial Memory Allocation ****'
+ 30 50 30 = dimensioning allowance for target generation
+ '**** Target Geometry and Composition ****'
+ 'FROM_FILE' = CSHAPE*9 shape directive
+ no SHPAR parameters needed
+ 1         = NCOMP = number of dielectric materials
+ '/gscratch/chem/clairew4/dielectrics/au_Conor_0K.txt' = file with refractive index 1
+ '**** Additional Nearfield calculation? ****'
+ 0  = NRFLD (=0 to skip nearfield calc., =1 to calculate nearfield E, =2 to calculate nearfield E and B)
+ 0.0 0.0 0.0 0.0 0.0 0.0 (fract. extens. of calc. vol. in -x,+x,-y,+y,-z,+z)
+ '**** Error Tolerance ****'
+ 1.00e-5 = TOL = MAX ALLOWED (NORM OF |G>=AC|E>-ACA|X>)/(NORM OF AC|E>)
+ '**** Maximum number of iterations ****'
+ 2370     = MXITER
+ '**** Integration cutoff parameter for PBC calculations ****'
+ 1.00e-2 = GAMMA (1e-2 is normal, 3e-3 for greater accuracy)
+ '**** Angular resolution for calculation of <cos>, etc. ****'
+ 0.5    = ETASCA (number of angles is proportional to [(3+x)/ETASCA]^2 )
+ '**** Vacuum wavelengths (micron) ****'
+ 0.6 0.6 1 'INV' = wavelengths (first,last,how many,how=LIN,INV,LOG)
+ '**** Gaussian beam parameters (unit = dipole spacing)'
+ 1  = FLGWAV: Option for wavefront: 0 -- Plane wave; 1 -- Gaussian beam
+ 0.00, 0.00, 0.00 = xyzc0, center of Gaussian beam waist, unit = dipole spacing
+ 144.0 = w0, Gaussian beam waist, unit = dipole spacing
+ '**** Refractive index of ambient medium'
+ 1.473 = NAMBIENT
+ '**** Effective Radii (micron) **** '
+ 0.0313 0.0313 1 'LIN' = eff. radii (first, last, how many, how=LIN,INV,LOG)
+ '**** Define Incident Polarizations ****'
+ (0,0) (1.,0.) (0.,0.) = Polarization state e01 (k along x axis)
+ 1 = IORTH  (=1 to do only pol. state e01; =2 to also do orth. pol. state)
+ '**** Specify which output files to write ****'
+ 0 = IWRKSC (=0 to suppress, =1 to write ".sca" file for each target orient.
+ '**** Specify Target Rotations ****'
+ 0.    0.   1  = BETAMI, BETAMX, NBETA  (beta=rotation around a1)
+ 0.    0.   1  = THETMI, THETMX, NTHETA (theta=angle between a1 and k)
+ 0.    0.   1  = PHIMIN, PHIMAX, NPHI (phi=rotation angle of a1 around k)
+ '**** Specify first IWAV, IRAD, IORI (normally 0 0 0) ****'
+ 0   0   0    = first IWAV, first IRAD, first IORI (0 0 0 to begin fresh)
+ '**** Select Elements of S_ij Matrix to Print ****'
+ 6       = NSMELTS = number of elements of S_ij to print (not more than 9)
+ 11 12 21 22 31 41       = indices ij of elements to print
+ '**** Specify Scattered Directions ****'
+ 'LFRAME' = CMDFRM (LFRAME, TFRAME for Lab Frame or Target Frame)
+ 100 = NPLANES = number of scattering planes
+ -180.0 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 1
+ -176.3636 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 2
+ -172.7273 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 3
+ -169.0909 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 4
+ -165.4545 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 5
+ -161.8182 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 6
+ -158.1818 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 7
+ -154.5455 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 8
+ -150.9091 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 9
+ -147.2727 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 10
+ -143.6364 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 11
+ -140.0 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 12
+ -136.3636 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 13
+ -132.7273 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 14
+ -129.0909 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 15
+ -125.4545 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 16
+ -121.8182 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 17
+ -118.1818 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 18
+ -114.5455 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 19
+ -110.9091 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 20
+ -107.2727 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 21
+ -103.6364 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 22
+ -100.0 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 23
+ -96.3636 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 24
+ -92.7273 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 25
+ -89.0909 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 26
+ -85.4545 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 27
+ -81.8182 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 28
+ -78.1818 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 29
+ -74.5455 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 30
+ -70.9091 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 31
+ -67.2727 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 32
+ -63.6364 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 33
+ -60.0 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 34
+ -56.3636 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 35
+ -52.7273 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 36
+ -49.0909 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 37
+ -45.4545 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 38
+ -41.8182 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 39
+ -38.1818 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 40
+ -34.5455 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 41
+ -30.9091 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 42
+ -27.2727 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 43
+ -23.6364 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 44
+ -20.0 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 45
+ -16.3636 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 46
+ -12.7273 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 47
+ -9.0909 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 48
+ -5.4545 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 49
+ -1.8182 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 50
+ 1.8182 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 51
+ 5.4545 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 52
+ 9.0909 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 53
+ 12.7273 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 54
+ 16.3636 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 55
+ 20.0 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 56
+ 23.6364 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 57
+ 27.2727 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 58
+ 30.9091 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 59
+ 34.5455 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 60
+ 38.1818 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 61
+ 41.8182 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 62
+ 45.4545 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 63
+ 49.0909 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 64
+ 52.7273 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 65
+ 56.3636 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 66
+ 60.0 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 67
+ 63.6364 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 68
+ 67.2727 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 69
+ 70.9091 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 70
+ 74.5455 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 71
+ 78.1818 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 72
+ 81.8182 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 73
+ 85.4545 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 74
+ 89.0909 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 75
+ 92.7273 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 76
+ 96.3636 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 77
+ 100.0 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 78
+ 103.6364 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 79
+ 107.2727 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 80
+ 110.9091 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 81
+ 114.5455 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 82
+ 118.1818 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 83
+ 121.8182 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 84
+ 125.4545 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 85
+ 129.0909 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 86
+ 132.7273 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 87
+ 136.3636 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 88
+ 140.0 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 89
+ 143.6364 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 90
+ 147.2727 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 91
+ 150.9091 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 92
+ 154.5455 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 93
+ 158.1818 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 94
+ 161.8182 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 95
+ 165.4545 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 96
+ 169.0909 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 97
+ 172.7273 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 98
+ 176.3636 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 99
+ 180.0 0. 35. 5 = phi, theta_min, theta_max (deg) for plane 100
