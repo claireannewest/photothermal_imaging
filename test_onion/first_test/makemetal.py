@@ -75,20 +75,29 @@ def label_particles():
 		temp_metal[particle] = temp_metal[particle]/len(points_in_particle)
 	return count, numParts, temp_metal, writeit
 
+count, numParts, temp_metal, writeit = label_particles()
+#print(temp_metal)
 def label_background():
-	count, numParts, temp_metal, writeit = label_particles()
+	count_allmetal, numParts, temp_metal, writeit = label_particles()
+	temp_background = np.zeros(len(tempfile) - len(shapefile))
+	back_idx = 0
+	count = count_allmetal
+
 	for line in temp_points:
 		idx = np.where((shape_points == line[0:3]).all(axis=1))
 		if idx[0].shape == (0,) and line[3] > cutoff:
 			### current coordinate, line, is a background point because it's not a shape point, 
 			### and the temperature is greater than the cutoff, so write it!
-			ICOMP = max(temp_round) - line[3] + numParts+1
-			writeit[count,:] = np.array([line[0], line[1], line[2], ICOMP])
+			temp_background[back_idx] = line[3]
+			writeit[count,:] = np.array([line[0], line[1], line[2], line[3]])
 			count = count+1
-	return count, temp_metal, writeit
+			back_idx = back_idx+1
+	## rescale background ICOMP because if max(temp metal) != max( temp back) , there would be a discontinuity
+	writeit[count_allmetal:,3] = max(temp_background) - writeit[count_allmetal:,3] + numParts+1
+	return count, temp_metal, temp_background, writeit
 
 def final_writeit():
-	count, temp_metal, writeit = label_background()
+	count, temp_metal, temp_background, writeit = label_background()
 	cleanup_writeit = writeit[0:count,:]
 	JA = np.linspace(1, count+1, count+1)
 
@@ -115,10 +124,10 @@ def final_writeit():
 	glyc_idxICOMPS = np.where(ICOMP > numParts)
 	glyc_ICOMPs = ICOMP[glyc_idxICOMPS]
 	unique_glyc_ICOMPs = np.unique(glyc_ICOMPs)
-
+	print(unique_glyc_ICOMPs)
 	for i in range(0, len(unique_glyc_ICOMPs)):
 		ICOMP = unique_glyc_ICOMPs[i]
-		temp = max(temp_round) - ICOMP + numParts+1
+		temp = max(temp_background) - ICOMP + numParts+1
 		file.write(' ' + str('"') + str(diel_path) + str('glyc_') + str(np.int(temp)) + str('K.txt"') + str(' = file with heated glycerol refractive index ') + '\n')
 	file.close()
 
@@ -142,4 +151,4 @@ def make_diel_files():
 	    file.close()
 
 
-make_diel_files()
+#make_diel_files()
