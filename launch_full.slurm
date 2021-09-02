@@ -35,38 +35,38 @@ zrange=$((2*width))
 zstart=-width
 zend=$zstart+$zrange
  
-# mkdir raster_data
-# mkdir gend_launch_files
-# mkdir standard_output 
+mkdir raster_data
+mkdir gend_launch_files
+mkdir standard_output 
 
-# for ((z=$zstart;z<=$zend;z+=$ss));do
-#     launch_file=gend_launch_files/lb_y-${width}_0_z${z}.slurm
-#     cp template_files/launch_batch.slurm ${launch_file}
-#     sed -i "s/name=NAMEVAL/name=pt_${jobname}/g" ${launch_file}
-#     sed -i "s/--name NAMEVAL/--name pt_${jobname}/g" ${launch_file}
-#     sed -i "s/lat_space=LATVAL/lat_space=${lat_space}/g" ${launch_file}
-#     sed -i "s/radius=RADVAL/radius=${radius}/g" ${launch_file}
-#     sed -i "s/yrange=YRVAL/yrange=${width}/g" ${launch_file}
-#     sed -i "s/ystart=YSVAL/ystart=-${width}/g" ${launch_file}
-#     sed -i "s/ss=SSVAL/ss=${ss}/g" ${launch_file}
-#     sed -i "s/z=ZVAL/z=${z}/g" ${launch_file}
-#     sbatch --output=standard_output/y-${width}_0_z${z}.out ${launch_file}
-# done 
+for ((z=$zstart;z<=$zend;z+=$ss));do
+    launch_file=gend_launch_files/lb_y-${width}_0_z${z}.slurm
+    cp template_files/launch_batch.slurm ${launch_file}
+    sed -i "s/name=NAMEVAL/name=pt_${jobname}/g" ${launch_file}
+    sed -i "s/--name NAMEVAL/--name pt_${jobname}/g" ${launch_file}
+    sed -i "s/lat_space=LATVAL/lat_space=${lat_space}/g" ${launch_file}
+    sed -i "s/radius=RADVAL/radius=${radius}/g" ${launch_file}
+    sed -i "s/yrange=YRVAL/yrange=${width}/g" ${launch_file}
+    sed -i "s/ystart=YSVAL/ystart=-${width}/g" ${launch_file}
+    sed -i "s/ss=SSVAL/ss=${ss}/g" ${launch_file}
+    sed -i "s/z=ZVAL/z=${z}/g" ${launch_file}
+    sbatch --output=standard_output/y-${width}_0_z${z}.out ${launch_file}
+done 
 
-# for ((z=$zstart;z<=$zend;z+=$ss));do
-#     launch_file=gend_launch_files/lb_y${ss}_${width}_z${z}.slurm
-#     cp template_files/launch_batch.slurm ${launch_file}
-#     sed -i "s/name=NAMEVAL/name=pt_${jobname}/g" ${launch_file}
-#     sed -i "s/--name NAMEVAL/--name pt_${jobname}/g" ${launch_file}
-#     sed -i "s/lat_space=LATVAL/lat_space=${lat_space}/g" ${launch_file}
-#     sed -i "s/radius=RADVAL/radius=${radius}/g" ${launch_file}
-#     sed -i "s/yrange=YRVAL/yrange=$(( $width - $ss))/g" ${launch_file}
-#     sed -i "s/ystart=YSVAL/ystart=${ss}/g" ${launch_file}
-#     sed -i "s/ss=SSVAL/ss=${ss}/g" ${launch_file}
-#     sed -i "s/z=ZVAL/z=${z}/g" ${launch_file}
-#     sbatch --output=standard_output/y${ss}_${width}_z${z}.out ${launch_file}
-# done
-# wait
+for ((z=$zstart;z<=$zend;z+=$ss));do
+    launch_file=gend_launch_files/lb_y${ss}_${width}_z${z}.slurm
+    cp template_files/launch_batch.slurm ${launch_file}
+    sed -i "s/name=NAMEVAL/name=pt_${jobname}/g" ${launch_file}
+    sed -i "s/--name NAMEVAL/--name pt_${jobname}/g" ${launch_file}
+    sed -i "s/lat_space=LATVAL/lat_space=${lat_space}/g" ${launch_file}
+    sed -i "s/radius=RADVAL/radius=${radius}/g" ${launch_file}
+    sed -i "s/yrange=YRVAL/yrange=$(( $width - $ss))/g" ${launch_file}
+    sed -i "s/ystart=YSVAL/ystart=${ss}/g" ${launch_file}
+    sed -i "s/ss=SSVAL/ss=${ss}/g" ${launch_file}
+    sed -i "s/z=ZVAL/z=${z}/g" ${launch_file}
+    sbatch --output=standard_output/y${ss}_${width}_z${z}.out ${launch_file}
+done
+wait
 
 ### Convert using Mueller Matrices to get a PT Image ###
 
