@@ -77,4 +77,4 @@ sed -i "s/stepsize=SSVAL/stepsize=${ss}/g" raster_data/collect_fml.py
 sed -i "s/lam_probe=LVAL/lam_probe=${lam_probe}/g" raster_data/collect_fml.py
 wait
 
-sbatch --dependency=singleton --job-name=pt_${name} template_files/launch_collect.slurm
+sbatch --dependency=singleton --job-name=pt_${jobname} template_files/launch_collect.slurm
