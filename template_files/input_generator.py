@@ -84,12 +84,10 @@ def main():
 
 ### Generate "ddscat.par" based on "shape_init.dat" ###
 def generate_ddscat(par, val, shape_init):
-    in_freq    = val[par.index("in_freq")]
+    pump_um    = val[par.index("pump_um")]
     nplanes    = val[par.index("nplanes")]
     theta_info = val[par.index("theta_info")]
     dc_dir     = val[par.index("dc_dir")]
-    nearfield  = val[par.index("nearfield")] 
-    gaussian   = val[par.index("gaussian")] 
     nambient   = val[par.index("nambient")] 
     inc_pol    = val[par.index("inc_pol")] 
     dip_space  = val[par.index("dip_space")]
@@ -112,7 +110,7 @@ def generate_ddscat(par, val, shape_init):
 
     # Gaussian beam pump waist (this is half of the FWHM or the waist radius of the beam) in dipole spacing
     NA = 1.25
-    waist = float(in_freq) * 10**3 * 0.6 / (NA) / int(dip_space)  
+    waist = float(pump_um) * 10**3 * 0.6 / (NA) / int(dip_space)  
     waist = "{0:.4f}".format(waist)
 
     # effective radius
@@ -134,7 +132,7 @@ def generate_ddscat(par, val, shape_init):
     str += (" 1         = NCOMP = number of dielectric materials\n")
     str += (" '%s' = file with refractive index 1\n" % dc_dir)
     str += (" '**** Additional Nearfield calculation? ****'\n")
-    str += (" %r = NRFLD (=0 to skip nearfield calc., =1 to calculate nearfield E, =2 to calculate nearfield E and B)\n" % (int(nearfield)))
+    str += (" 2 = NRFLD (=0 to skip nearfield calc., =1 to calculate nearfield E, =2 to calculate nearfield E and B)\n")
     str += (" 0.0 0.0 0.0 0.0 0.0 0.0 (fract. extens. of calc. vol. in -x,+x,-y,+y,-z,+z)\n")
     str += (" '**** Error Tolerance ****'\n")
     str += (" 1.00e-5 = TOL = MAX ALLOWED (NORM OF |G>=AC|E>-ACA|X>)/(NORM OF AC|E>)\n")
@@ -145,9 +143,9 @@ def generate_ddscat(par, val, shape_init):
     str += (" '**** Angular resolution for calculation of <cos>, etc. ****'\n")
     str += (" 0.5    = ETASCA (number of angles is proportional to [(3+x)/ETASCA]^2 )\n")
     str += (" '**** Vacuum wavelengths (micron) ****'\n")
-    str += (" %r %r 1 'INV' = wavelengths (first,last,how many,how=LIN,INV,LOG)\n" % (float(in_freq), float(in_freq)))
+    str += (" %r %r 1 'INV' = wavelengths (first,last,how many,how=LIN,INV,LOG)\n" % (float(pump_um), float(pump_um)))
     str += (" '**** Gaussian beam parameters (unit = dipole spacing)'\n")
-    str += (" %r  = FLGWAV: Option for wavefront: 0 -- Plane wave; 1 -- Gaussian beam\n" % (int(gaussian)))
+    str += (" 1  = FLGWAV: Option for wavefront: 0 -- Plane wave; 1 -- Gaussian beam\n")
     str += (" 0.00, 0.00, 0.00 = xyzc0, center of Gaussian beam waist, unit = dipole spacing\n")
     str += (" %r = w0, Gaussian beam waist, unit = dipole spacing\n" % (float(waist)))
     str += (" '**** Refractive index of ambient medium'\n")
@@ -183,7 +181,7 @@ def generate_var(par, val, shape_init):
     k_out     = val[par.index("k_out")] 
     k_in      = val[par.index("k_in")]
     k_sub     = val[par.index("k_sub")]
-    lambda_   = val[par.index("in_freq")]
+    lambda_   = val[par.index("pump_um")]
     n_m       = val[par.index("n_m")]
     P_0       = val[par.index("P_0")]
     unit      = val[par.index("dip_space")]
@@ -210,11 +208,11 @@ def generate_var(par, val, shape_init):
     x_plane_max = int( (x_max+x_min) / 2)
     x_plane_min = int( (x_max+x_min)/ 2)
     
-    in_freq    = val[par.index("in_freq")]
+    pump_um    = val[par.index("pump_um")]
     dip_space  = val[par.index("dip_space")]
     NA = 1.25
     # waist of pump beam
-    waist = float(in_freq) * 10**3 * 0.6 / (NA) / int(dip_space)
+    waist = float(pump_um) * 10**3 * 0.6 / (NA) / int(dip_space)
     waist = float(waist)
     I_0 = float(P_0) / ( math.pi * (waist * int(dip_space) * 10**-9)**2 )*10**-9 #units of nW/m^2, then will get converted to W/m^2 for var.par
     I_0 = "{:.4E}".format(I_0)
@@ -262,11 +260,9 @@ def generate_psf(par, val, shape_init):
 
 ### Generate the new "ddscat.par" based on the "filler_ddscat.par" ###
 def generate_ddscatN(par, val, shape_new, filler, tempmax):
-    in_freq_T  = val[par.index("in_freq_T")] 
+    pump_um_T  = val[par.index("pump_um_T")] 
     nplanes    = val[par.index("nplanes")]
     theta_info = val[par.index("theta_info")]
-    nearfield  = val[par.index("nearfield")] 
-    gaussian   = val[par.index("gaussian")] 
     focal_offset = val[par.index("focal_offset")]
 
     with open(tempmax,'r') as file:
@@ -297,7 +293,7 @@ def generate_ddscatN(par, val, shape_new, filler, tempmax):
     # Gaussian beam probe waist (this is half of the FWHM or the waist radius of the beam) in dipole spacing
 
     NA = 1.25
-    waist = float(in_freq_T) * 0.6 * 10**3 / (NA) / int(dip_space)  
+    waist = float(pump_um_T) * 0.6 * 10**3 / (NA) / int(dip_space)  
     waist = "{0:.4f}".format(waist)
 
     # effective radius
@@ -336,9 +332,9 @@ def generate_ddscatN(par, val, shape_new, filler, tempmax):
     str += (" '**** Angular resolution for calculation of <cos>, etc. ****'\n")
     str += (" 0.5    = ETASCA (number of angles is proportional to [(3+x)/ETASCA]^2 )\n")
     str += (" '**** Vacuum wavelengths (micron) ****'\n")
-    str += (" %r %r 1 'INV' = wavelengths (first,last,how many,how=LIN,INV,LOG)\n" % (float(in_freq_T), float(in_freq_T)))
+    str += (" %r %r 1 'INV' = wavelengths (first,last,how many,how=LIN,INV,LOG)\n" % (float(pump_um_T), float(pump_um_T)))
     str += (" '**** Gaussian beam parameters (unit = dipole spacing)'\n")
-    str += (" %r  = FLGWAV: Option for wavefront: 0 -- Plane wave; 1 -- Gaussian beam\n" % (int(gaussian)))
+    str += (" 1  = FLGWAV: Option for wavefront: 0 -- Plane wave; 1 -- Gaussian beam\n")
     str += (" %r, 0.00, 0.00 = xyzc0, center of Gaussian beam waist, unit = dipole spacing\n" % (float(focal_offset)))
     str += (" %r = w0, Gaussian beam waist, unit = dipole spacing\n" % (float(waist)))
     str += (" '**** Refractive index of ambient medium'\n")
@@ -374,11 +370,10 @@ def generate_ddscatN(par, val, shape_new, filler, tempmax):
 ### Make the room temperature ddscat.par file ###
 
 def generate_ddscatR(par, val, shape_init):
-    in_freq_T  = val[par.index("in_freq_T")]
+    pump_um_T  = val[par.index("pump_um_T")]
     dc_dir     = val[par.index("dc_dir")]
     nplanes    = val[par.index("nplanes")]
     theta_info = val[par.index("theta_info")]
-    gaussian   = val[par.index("gaussian")]
     nambient   = val[par.index("nambient")]
     inc_pol    = val[par.index("inc_pol")]
     dip_space  = val[par.index("dip_space")]
@@ -399,9 +394,9 @@ def generate_ddscatR(par, val, shape_init):
     mem_allo_y = max(y) - min(y) + 10
     mem_allo_z = max(z) - min(z) + 10
 
-    # Gaussian beam probe waist (this is half of the FWHM or the waist radius of the beam) in dipole spacing                                                    
+    # Gaussian beam probe waist (this is half of the FWHM or the waist radius of the beam) in dipole spacing      
     NA = 1.25
-    waist = float(in_freq_T) * 0.6 * 10**3 / (NA) / int(dip_space)
+    waist = float(pump_um_T) * 0.6 * 10**3 / (NA) / int(dip_space)
     waist = "{0:.4f}".format(waist)
 
     # effective radius
@@ -434,9 +429,9 @@ def generate_ddscatR(par, val, shape_init):
     str += (" '**** Angular resolution for calculation of <cos>, etc. ****'\n")
     str += (" 0.5    = ETASCA (number of angles is proportional to [(3+x)/ETASCA]^2 )\n")
     str += (" '**** Vacuum wavelengths (micron) ****'\n")
-    str += (" %r %r 1 'INV' = wavelengths (first,last,how many,how=LIN,INV,LOG)\n" % (float(in_freq_T), float(in_freq_T)))
+    str += (" %r %r 1 'INV' = wavelengths (first,last,how many,how=LIN,INV,LOG)\n" % (float(pump_um_T), float(pump_um_T)))
     str += (" '**** Gaussian beam parameters (unit = dipole spacing)'\n")
-    str += (" %r  = FLGWAV: Option for wavefront: 0 -- Plane wave; 1 -- Gaussian beam\n" % (int(gaussian)))
+    str += (" 1  = FLGWAV: Option for wavefront: 0 -- Plane wave; 1 -- Gaussian beam\n")
     str += (" %r, 0.00, 0.00 = xyzc0, center of Gaussian beam waist, unit = dipole spacing\n" % (float(focal_offset)))
     str += (" %r = w0, Gaussian beam waist, unit = dipole spacing\n" % (float(waist)))
     str += (" '**** Refractive index of ambient medium'\n")
