@@ -53,28 +53,28 @@ for ((z=$zstart;z<=$zend;z+=$ss));do
     sbatch --output=standard_output/y-${width}_0_z${z}.out ${launch_file}
 done 
 
-for ((z=$zstart;z<=$zend;z+=$ss));do
-    launch_file=gend_launch_files/lb_y${ss}_${width}_z${z}.slurm
-    cp template_files/launch_batch.slurm ${launch_file}
-    sed -i "s/name=NAMEVAL/name=pt_${jobname}/g" ${launch_file}
-    sed -i "s/--name NAMEVAL/--name pt_${jobname}/g" ${launch_file}
-    sed -i "s/lat_space=LATVAL/lat_space=${lat_space}/g" ${launch_file}
-    sed -i "s/radius=RADVAL/radius=${radius}/g" ${launch_file}
-    sed -i "s/yrange=YRVAL/yrange=$(( $width - $ss))/g" ${launch_file}
-    sed -i "s/ystart=YSVAL/ystart=${ss}/g" ${launch_file}
-    sed -i "s/ss=SSVAL/ss=${ss}/g" ${launch_file}
-    sed -i "s/z=ZVAL/z=${z}/g" ${launch_file}
-    sbatch --output=standard_output/y${ss}_${width}_z${z}.out ${launch_file}
-done
-wait
+# for ((z=$zstart;z<=$zend;z+=$ss));do
+#     launch_file=gend_launch_files/lb_y${ss}_${width}_z${z}.slurm
+#     cp template_files/launch_batch.slurm ${launch_file}
+#     sed -i "s/name=NAMEVAL/name=pt_${jobname}/g" ${launch_file}
+#     sed -i "s/--name NAMEVAL/--name pt_${jobname}/g" ${launch_file}
+#     sed -i "s/lat_space=LATVAL/lat_space=${lat_space}/g" ${launch_file}
+#     sed -i "s/radius=RADVAL/radius=${radius}/g" ${launch_file}
+#     sed -i "s/yrange=YRVAL/yrange=$(( $width - $ss))/g" ${launch_file}
+#     sed -i "s/ystart=YSVAL/ystart=${ss}/g" ${launch_file}
+#     sed -i "s/ss=SSVAL/ss=${ss}/g" ${launch_file}
+#     sed -i "s/z=ZVAL/z=${z}/g" ${launch_file}
+#     sbatch --output=standard_output/y${ss}_${width}_z${z}.out ${launch_file}
+# done
+# wait
 
-### Convert using Mueller Matrices to get a PT Image ###
+# ### Convert using Mueller Matrices to get a PT Image ###
 
-cp template_files/collect_temp_fml.py raster_data/collect_fml.py
-sed -i "s/begin=BVAL/begin=-${width}/g" raster_data/collect_fml.py
-sed -i "s/end=EVAL/end=$(( $width + 1))/g" raster_data/collect_fml.py
-sed -i "s/stepsize=SSVAL/stepsize=${ss}/g" raster_data/collect_fml.py
-sed -i "s/lam_probe=LVAL/lam_probe=${lam_probe}/g" raster_data/collect_fml.py
-wait
+# cp template_files/collect_temp_fml.py raster_data/collect_fml.py
+# sed -i "s/begin=BVAL/begin=-${width}/g" raster_data/collect_fml.py
+# sed -i "s/end=EVAL/end=$(( $width + 1))/g" raster_data/collect_fml.py
+# sed -i "s/stepsize=SSVAL/stepsize=${ss}/g" raster_data/collect_fml.py
+# sed -i "s/lam_probe=LVAL/lam_probe=${lam_probe}/g" raster_data/collect_fml.py
+# wait
 
-sbatch --dependency=singleton --job-name=pt_${jobname} template_files/launch_collect.slurm
+# sbatch --dependency=singleton --job-name=pt_${jobname} template_files/launch_collect.slurm
