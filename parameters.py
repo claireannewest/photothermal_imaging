@@ -1,6 +1,8 @@
 ### Material Parameters ###
 # Dipole spacing
 DS: 1
+# Radius of sphere
+radius: 5
 # Dielectric data of room temperature metal
 rt_dir: /gscratch/chem/clairew4/dielectrics/au_Conor_0K.txt
 # Dielectric data of heated metal
@@ -24,7 +26,7 @@ P_pu: 0.0002
 # Pump Polarization
 P_pu_pol: y
 # Pump Focal offset [DS]
-P_pu_offset: 0
+P_pu_offset: 1
 
 ### Probe Scattering Calculation ###
 # Probe laser wavelength [um]
@@ -36,11 +38,16 @@ P_pr_pol: y
 # Probe Focal offset [DS]
 P_pr_offset: 0
 
-### Field Integration and Raster Parameters ###
-# number of phi values, from -180 to 180 deg
-nplanes: 100
-# theta_min, theta_max, and increment in degree
-# (0 to 90)/(90 to 180)/(0 to 180) for forward/backward/all scattering 
+# Field parameters
+# phi_min, phi_max, step size
+phi_info: -180 180 5
+# theta_min, theta_max, step size
 theta_info: 0 35 5
-NA: 1.25
-n_ambient_heated: 0.00 
+# Numerical apperature of lens
+num_app: 1.25
+# IDK
+n_ambient_heated: 0.00
+# Half size of image box
+image_width: 10
+# Step size of raster
+ss: 10
