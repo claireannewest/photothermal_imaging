@@ -290,7 +290,8 @@ class Photothermal_Image:
             ### Convert theta_fml to theta 
             theta = np.arccos(z/magr)
             phi = np.arctan2(y, x)
-            return np.array([Ex, Ey, Ez]), weights, theta, phi
+
+            return np.array([Ex, Ey, Ez]), weights, theta, phi, theta_fml, phi_fml
 
         def E_gaussian(self,filename,skip):
                 # for one beam position, calculate the field on the partial hemi
@@ -320,7 +321,6 @@ class Photothermal_Image:
                 IPT_R = np.zeros(IPT_TOT_HMR.shape)
                 ycoords = np.zeros(IPT_TOT_HMR.shape)
                 zcoords = np.zeros(IPT_TOT_HMR.shape)
-
                 for valy in range(-self.image_width,self.image_width+self.ss,self.ss):
                         for valz in range(-self.image_width,self.image_width+self.ss,self.ss):
                                 print(valy, valz)
@@ -329,8 +329,11 @@ class Photothermal_Image:
                                 lines_H = self.file_len(base_file+str('H'))
                                 lines_R = self.file_len(base_file+str('R'))
                                 base = 29; ndiff = lines_H-lines_R
-                                E_H, weights, theta, phi = self.field_MM(filename=str(base_file+str('H')),skip=base+ndiff) 
-                                E_R, _, _, _ = self.field_MM(filename=str(base_file+str('R')),skip=base)
+                                E_H, weights, theta, phi, theta_fml, phi_fml = self.field_MM(filename=str(base_file+str('H')),skip=base+ndiff) 
+                                theta_fml_rad = theta_fml*np.pi/180
+                                phi_fml_rad = phi_fml*np.pi/180
+
+                                E_R, _, _, _,_,_ = self.field_MM(filename=str(base_file+str('R')),skip=base)
                                 E_p = self.E_gaussian(filename=str(base_file+str('R')),skip=base)
                                 hot_minus_room = np.zeros(E_p.shape[1])
                                 interf_term = np.zeros(E_p.shape[1])
@@ -338,8 +341,8 @@ class Photothermal_Image:
                                         E_H_dTheta_dPhi = E_H[:,i]
                                         E_R_dTheta_dPhi = E_R[:,i]
                                         E_p_dTheta_dPhi = E_p[:,i]
-                                        hot_minus_room[i] = 1/4*( np.linalg.norm(E_H[:,i])**2 - np.linalg.norm(E_R[:,i])**2 )*np.sin(theta[i])
-                                        interf_term[i] = 1/2*np.real( np.dot(E_p[:,i] , np.conj(E_H[:,i] - E_R[:,i])) )*np.sin(theta[i])
+                                        hot_minus_room[i] = ( np.linalg.norm(E_H[:,i])**2 - np.linalg.norm(E_R[:,i])**2 )*np.sin(theta_fml[i])
+                                        interf_term[i] = 2*np.real( np.dot(E_p[:,i] , np.conj(E_H[:,i] - E_R[:,i])) )*np.sin(theta_fml[i])
                                         if i in weights[0][0]:
                                                 hot_minus_room[i] = hot_minus_room[i]*0.5
                                                 interf_term[i] = interf_term[i]*0.5
@@ -358,12 +361,13 @@ class Photothermal_Image:
                                 ycoords[yi, zi] = valy
                                 zcoords[yi, zi] = valz
 
-                                dtheta = theta[9] - theta[0] # radians
-                                dphi = phi[0] - phi[1] # radians
+                                dtheta = float(self.theta_info[2])*np.pi/180 
+                                dphi = float(self.phi_info[2])*np.pi/180
 
+                                # Integrate 
                                 IPT_TOT_HMR[yi, zi] = c*self.n_R/(8*np.pi)*np.sum(hot_minus_room)*dtheta*dphi
                                 IPT_TOT_INT[yi, zi] = c*self.n_R/(8*np.pi)*np.sum(interf_term)*dtheta*dphi
-                                # print(IPT_TOT_HMR)
+
                 return ycoords, zcoords, IPT_TOT_HMR, IPT_TOT_INT
 
         def collect_fml(self):
@@ -371,7 +375,7 @@ class Photothermal_Image:
                 ywrite = np.ravel(ycoords); zwrite = np.ravel(zcoords)
                 IPT_HMR_write = np.ravel(IPT_HMR)
                 IPT_INT_write = np.ravel(IPT_INT)
-                file = open(str('pt_signal_new.txt'),'w')
+                file = open(str('pt_signal.txt'),'w')
                 file.write(str('y') + '\t' + str('z') + '\t' + str('H-R') + '\t' + str('INT') + '\n')
                 for i in range(0, len(ywrite)):
                         file.write("%d \t %d \t %2.4e \t %2.4e \n" % (ywrite[i],  zwrite[i], IPT_HMR_write[i],  IPT_INT_write[i]))
@@ -379,10 +383,4 @@ class Photothermal_Image:
 
 
 
-
-#pt = Photothermal_Image()
-# pt.make_ddscatpar(shapefile=str("shape.dat"),step=str("probe_room"))
-# pt.make_varpar(shapefile=str("shape.dat"))
-# pt.make_makemetal(shapefile="shape.dat")
-#pt.collect_fml()
 
