@@ -84,7 +84,7 @@ class Photothermal_Image:
                         n_back = n_back[0]
                         inc_pol = self.P_pr_pol
                         wrsc = 1
-                        nplanes = (int(self.phi_info[1]) - int(self.phi_info[0])) / int(self.phi_info[2]) + 1
+                        nplanes = self.num_phi + 1
 
                 ##### ROOM PROBE SCATTERING #####
                 if step == "probe_room":
@@ -97,7 +97,7 @@ class Photothermal_Image:
                         n_back = self.n_R
                         inc_pol = self.P_pr_pol
                         wrsc = 1
-                        nplanes = (int(self.phi_info[1]) - int(self.phi_info[0])) / int(self.phi_info[2]) + 1
+                        nplanes = self.num_phi + 1
 
 		#################
 		# memory allocation 
@@ -181,7 +181,7 @@ class Photothermal_Image:
                         f.write(" %r = NPLANES = number of scattering planes\n" % int(nplanes))
                         for i in range(int(nplanes)):
                                 phi = -180 + i * 360 / (int(nplanes) - 1)
-                                f.write(" %r %r. %r. %r = phi, theta_min, theta_max (deg) for plane %r\n" % ( float("{0:.4f}".format(phi)), int(self.theta_info[0]), int(self.theta_info[1]), int(self.theta_info[2]), i+1))
+                                f.write(" %r %r %r %r = phi, theta_min, theta_max (deg) for plane %r\n" % ( float(phi), float(self.theta_info[0]), float(self.theta_info[1]), float(self.theta_info[2]), i+1))
                 f.close()
 
         def make_varpar(self, shapefile):
@@ -341,8 +341,8 @@ class Photothermal_Image:
                                         E_H_dTheta_dPhi = E_H[:,i]
                                         E_R_dTheta_dPhi = E_R[:,i]
                                         E_p_dTheta_dPhi = E_p[:,i]
-                                        hot_minus_room[i] = ( np.linalg.norm(E_H[:,i])**2 - np.linalg.norm(E_R[:,i])**2 )*np.sin(theta_fml[i])
-                                        interf_term[i] = 2*np.real( np.dot(E_p[:,i] , np.conj(E_H[:,i] - E_R[:,i])) )*np.sin(theta_fml[i])
+                                        hot_minus_room[i] = ( np.linalg.norm(E_H[:,i])**2 - np.linalg.norm(E_R[:,i])**2 )*np.sin(theta_fml_rad[i])
+                                        interf_term[i] = 2*np.real( np.dot(E_p[:,i] , np.conj(E_H[:,i] - E_R[:,i])) )*np.sin(theta_fml_rad[i])
                                         if i in weights[0][0]:
                                                 hot_minus_room[i] = hot_minus_room[i]*0.5
                                                 interf_term[i] = interf_term[i]*0.5

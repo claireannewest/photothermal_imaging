@@ -40,14 +40,14 @@ P_pr_offset: 0
 
 # Field parameters
 # phi_min, phi_max, step size
-phi_info: -180 180 5
+phi_info: -180 180 1
 # theta_min, theta_max, step size
-theta_info: 0 35 5
+theta_info: 0 35 0.2
 # Numerical apperature of lens
 num_app: 1.25
 # IDK
 n_ambient_heated: 0.00
 # Half size of image box
-image_width: 10
+image_width: 50
 # Step size of raster
 ss: 10
