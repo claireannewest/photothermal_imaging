@@ -42,7 +42,7 @@ P_pr_offset: 0
 # phi_min, phi_max, step size
 phi_info: -180 180 1
 # theta_min, theta_max, step size
-theta_info: 0 35 0.2
+theta_info: 0 35 1
 # Numerical apperature of lens
 num_app: 1.25
 # IDK

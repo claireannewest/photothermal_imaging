@@ -32,11 +32,11 @@ class Photothermal_Image:
                 self.pump_um = float(val[par.index("pump_um")])
                 self.P_pu = float(val[par.index("P_pu")])
                 self.P_pu_pol = val[par.index("P_pu_pol")]
-                self.P_pu_offset = float(val[par.index("P_pu_offset")])
+                self.P_pu_offset = float(val[par.index("P_pu_offset")])*self.DS*1E-7 # units of cm 
                 self.probe_um = float(val[par.index("probe_um")])
                 self.P_pr = float(val[par.index("P_pr")])
                 self.P_pr_pol = val[par.index("P_pr_pol")]
-                self.P_pr_offset = float(val[par.index("P_pr_offset")])
+                self.P_pr_offset = float(val[par.index("P_pr_offset")])*self.DS*1E-7 # units of cm
                 self.phi_info = val[par.index("phi_info")]
                 self.theta_info = val[par.index("theta_info")]
                 self.NA = float(val[par.index("num_app")])
@@ -64,7 +64,7 @@ class Photothermal_Image:
                         diel_files = str(' "') + str(self.rt_dir) + str('" = file with metal refractive index\n')
                         ncomp = 1
                         nrfld = 2
-                        focal_offset = self.P_pu_offset
+                        focal_offset = self.P_pu_offset/(self.DS*1E-7) # DS
                         n_back = self.n_R
                         inc_pol = self.P_pu_pol
                         wrsc = 0
@@ -78,7 +78,7 @@ class Photothermal_Image:
                                 diel_files = heated_material.readlines()
                                 ncomp = len(diel_files)
                         nrfld = 0
-                        focal_offset = self.P_pr_offset
+                        focal_offset = self.P_pr_offset/(self.DS*1E-7) # DS  
                         with open(str("n_T_of_temp_max"),'r') as file:
                                 n_back = file.readlines()
                         n_back = n_back[0]
@@ -93,7 +93,7 @@ class Photothermal_Image:
                         diel_files = str(' "') + str(self.rt_dir) + str('" = file with metal refractive index\n')
                         ncomp = 1
                         nrfld = 0
-                        focal_offset = self.P_pr_offset
+                        focal_offset = self.P_pr_offset/(self.DS*1E-7) # DS  
                         n_back = self.n_R
                         inc_pol = self.P_pr_pol
                         wrsc = 1
@@ -249,7 +249,7 @@ class Photothermal_Image:
             fmlfile = np.loadtxt(filename, skiprows=skip)
             theta_fml = (fmlfile[:,0])*np.pi/180 # radians
             phi_fml = fmlfile[:,1]*np.pi/180 # radians
-            weights = []
+            weights = np.zeros(len(theta_fml))+1
             f11 = fmlfile[:, 2] + 1j*fmlfile[:, 3]
             f21 = fmlfile[:, 4] + 1j*fmlfile[:, 5]
             f12 = 0; f22 = 0
@@ -278,15 +278,15 @@ class Photothermal_Image:
             y = magr*np.sin(theta_fml)*np.cos(phi_fml)
             z = magr*np.sin(theta_fml)*np.sin(phi_fml)
 
-            idx_thetamin = np.where(theta_fml*180/np.pi == int(self.theta_info[0]))
-            idx_thetamax = np.where(theta_fml*180/np.pi == int(self.theta_info[1]))
-            idx_phimin = np.where(phi_fml*180/np.pi == int(self.phi_info[0]))
-            idx_phimax = np.where(phi_fml*180/np.pi == int(self.phi_info[1]))
+            idx_thetamin = np.where(theta_fml*180/np.pi == float(self.theta_info[0]))
+            idx_thetamax = np.where(theta_fml*180/np.pi == float(self.theta_info[1]))
+            idx_phimin = np.where(phi_fml*180/np.pi == float(self.phi_info[0]))
+            idx_phimax = np.where(phi_fml*180/np.pi == float(self.phi_info[1]))
+            weights[idx_thetamin] = 0.5
+            weights[idx_thetamax] = 0.5
+            weights[idx_phimin] = 0.5
+            weights[idx_phimax] = 0.5
 
-            weights.append(idx_thetamin)
-            weights.append(idx_thetamax)
-            weights.append(idx_phimin)
-            weights.append(idx_phimax)
             ### Convert theta_fml to theta 
             theta = np.arccos(z/magr)
             phi = np.arctan2(y, x)
@@ -319,6 +319,7 @@ class Photothermal_Image:
                 IPT_TOT_HMR = np.zeros((int(self.image_width*2/(self.ss)+1), int(self.image_width*2/(self.ss)+1)))
                 IPT_TOT_INT = np.zeros(IPT_TOT_HMR.shape)
                 IPT_R = np.zeros(IPT_TOT_HMR.shape)
+                IPT_one = np.zeros(IPT_TOT_HMR.shape)
                 ycoords = np.zeros(IPT_TOT_HMR.shape)
                 zcoords = np.zeros(IPT_TOT_HMR.shape)
                 for valy in range(-self.image_width,self.image_width+self.ss,self.ss):
@@ -330,31 +331,16 @@ class Photothermal_Image:
                                 lines_R = self.file_len(base_file+str('R'))
                                 base = 29; ndiff = lines_H-lines_R
                                 E_H, weights, theta, phi, theta_fml, phi_fml = self.field_MM(filename=str(base_file+str('H')),skip=base+ndiff) 
-                                theta_fml_rad = theta_fml*np.pi/180
-                                phi_fml_rad = phi_fml*np.pi/180
-
                                 E_R, _, _, _,_,_ = self.field_MM(filename=str(base_file+str('R')),skip=base)
                                 E_p = self.E_gaussian(filename=str(base_file+str('R')),skip=base)
                                 hot_minus_room = np.zeros(E_p.shape[1])
                                 interf_term = np.zeros(E_p.shape[1])
-                                for i in range(0, E_p.shape[1]):
-                                        E_H_dTheta_dPhi = E_H[:,i]
-                                        E_R_dTheta_dPhi = E_R[:,i]
-                                        E_p_dTheta_dPhi = E_p[:,i]
-                                        hot_minus_room[i] = ( np.linalg.norm(E_H[:,i])**2 - np.linalg.norm(E_R[:,i])**2 )*np.sin(theta_fml_rad[i])
-                                        interf_term[i] = 2*np.real( np.dot(E_p[:,i] , np.conj(E_H[:,i] - E_R[:,i])) )*np.sin(theta_fml_rad[i])
-                                        if i in weights[0][0]:
-                                                hot_minus_room[i] = hot_minus_room[i]*0.5
-                                                interf_term[i] = interf_term[i]*0.5
-                                        if i in weights[1][0]:
-                                                hot_minus_room[i] = hot_minus_room[i]*0.5
-                                                interf_term[i] = interf_term[i]*0.5
-                                        if i in weights[2][0]:
-                                                hot_minus_room[i] = hot_minus_room[i]*0.5
-                                                interf_term[i] = interf_term[i]*0.5
-                                        if i in weights[3][0]:
-                                                hot_minus_room[i] = hot_minus_room[i]*0.5
-                                                interf_term[i] = interf_term[i]*0.5
+                                one_term =  np.zeros(E_p.shape[1])+1
+
+                                modEH_sqrd = np.sum(E_H.real**2 + E_H.imag**2, axis=0)
+                                modER_sqrd = np.sum(E_R.real**2 + E_R.imag**2, axis=0)
+                                hot_minus_room = modEH_sqrd - modER_sqrd
+                                interf_term = 2*np.real( np.sum(E_p*np.conj(E_H - E_R),axis=0))
 
                                 yi = int((valy + self.image_width)/self.ss)
                                 zi = int((valz + self.image_width)/self.ss)
@@ -365,20 +351,21 @@ class Photothermal_Image:
                                 dphi = float(self.phi_info[2])*np.pi/180
 
                                 # Integrate 
-                                IPT_TOT_HMR[yi, zi] = c*self.n_R/(8*np.pi)*np.sum(hot_minus_room)*dtheta*dphi
-                                IPT_TOT_INT[yi, zi] = c*self.n_R/(8*np.pi)*np.sum(interf_term)*dtheta*dphi
-
-                return ycoords, zcoords, IPT_TOT_HMR, IPT_TOT_INT
+                                IPT_TOT_HMR[yi, zi] = c*self.n_R/(8*np.pi)*( np.sum(hot_minus_room*np.sin(theta_fml)*dtheta*dphi*weights ) )
+                                IPT_TOT_INT[yi, zi] = c*self.n_R/(8*np.pi)*( np.sum(interf_term*np.sin(theta_fml)*dtheta*dphi*weights ) )
+                                IPT_one[yi, zi] = np.sum(np.abs(one_term)*np.sin(theta_fml)*dtheta*dphi*weights)
+                return ycoords, zcoords, IPT_TOT_HMR, IPT_TOT_INT, IPT_one
 
         def collect_fml(self):
-                ycoords, zcoords, IPT_HMR, IPT_INT = self.calculated_IPT()
+                ycoords, zcoords, IPT_HMR, IPT_INT, IPT_one = self.calculated_IPT()
                 ywrite = np.ravel(ycoords); zwrite = np.ravel(zcoords)
                 IPT_HMR_write = np.ravel(IPT_HMR)
                 IPT_INT_write = np.ravel(IPT_INT)
+                IPT_one_write = np.ravel(IPT_one)
                 file = open(str('pt_signal.txt'),'w')
                 file.write(str('y') + '\t' + str('z') + '\t' + str('H-R') + '\t' + str('INT') + '\n')
                 for i in range(0, len(ywrite)):
-                        file.write("%d \t %d \t %2.4e \t %2.4e \n" % (ywrite[i],  zwrite[i], IPT_HMR_write[i],  IPT_INT_write[i]))
+                        file.write("%d \t %d \t %2.4e \t %2.4e \t %2.4e \n" % (ywrite[i],  zwrite[i], IPT_HMR_write[i],  IPT_INT_write[i], IPT_one_write[i]))
 
 
 
