@@ -5,7 +5,7 @@ from scipy.interpolate import interp1d
 nb=1.473
 
 def eps(wavelength):
-	JCdata = np.loadtxt('auJC.tab',skiprows=3)
+	JCdata = np.loadtxt('auJC_interp.tab',skiprows=3)
 	wave = JCdata[:,0]*1E-4 # cm
 	n_re_raw = JCdata[:,1]
 	n_im_raw = JCdata[:,2]
@@ -118,6 +118,7 @@ def compare_them_all():
 	fig.savefig('check_pols.png',
 	    dpi=500, bbox_inches='tight'
 	    )
+compare_them_all()
 
 #################################
 
@@ -170,4 +171,4 @@ def vary_pump():
 	#     )
 
 
-vary_pump()
+# vary_pump()
