@@ -12,8 +12,6 @@ class ScalarFormatterForceFormat(ScalarFormatter):
     def _set_format(self):  # Override function that finds format to use.
         self.format = "%.0f"  # Give format here
 
-
-
 e = 4.80326E-10 # elementary charge, [statC, g^1/2 cm^3/2 s^-1]
 c = 2.998E+10 # speed of light [cm/s]
 hbar_eVs = 6.58212E-16 # Planck's constant [eV*s]
@@ -120,8 +118,6 @@ class Photothermal_Image:
         self.kappa = 0.6*(1E7/100) # erg/ (s cm K)
         self.C = (1.26*2.35*1E7) # erg / (cm^3 K)
         self.Omega = 1E5 # 1/s (100 kHz)
-        self.f_thph = 1 
-        self.g_thph=1
         self.rth = np.sqrt(2*self.kappa/(self.Omega*self.C))
         self.shell_radius = self.rth 
         self.dnbdT = -10**(-4)
@@ -144,7 +140,7 @@ class Photothermal_Image:
     def zR(self):
         return np.pi*self.waist(self.wave_probe)**2*self.nb_T0/self.wave_probe
 
-    def eps_gold_room(self, selected_waves):
+    def eps_gold_room(self, selected_waves,drude=False):
         JCdata = np.loadtxt('auJC_interp.tab',skiprows=3)
         wave = np.round(JCdata[:,0]*1E-4,7) # cm
         n_re = JCdata[:,1]
@@ -152,18 +148,19 @@ class Photothermal_Image:
         idx = np.where(np.in1d(wave, selected_waves))[0]
         n = n_re[idx] + 1j*n_im[idx]
         eps = n_re[idx]**2 - n_im[idx]**2 +1j*(2*n_re[idx]*n_im[idx])
-        # drude = np.loadtxt('agDrudeFit_101421.tab',skiprows=3)
-        # wave = np.round(drude[:,0]*1E-4,7) # cm
-        # eps_re = drude[:,1]
-        # eps_im = drude[:,2]
-        # eps_c = eps_re + 1j*eps_im
-        # mod_eps_c = np.sqrt(eps_re**2 + eps_im**2)
-        # n_re = np.sqrt( (mod_eps_c + eps_re )/ 2)
-        # n_im = np.sqrt( (mod_eps_c - eps_re )/ 2)
+        if drude == True:
+            drude = np.loadtxt('agDrudeFit_101421.tab',skiprows=3)
+            wave = np.round(drude[:,0]*1E-4,7) # cm
+            eps_re = drude[:,1]
+            eps_im = drude[:,2]
+            eps_c = eps_re + 1j*eps_im
+            mod_eps_c = np.sqrt(eps_re**2 + eps_im**2)
+            n_re = np.sqrt( (mod_eps_c + eps_re )/ 2)
+            n_im = np.sqrt( (mod_eps_c - eps_re )/ 2)
 
-        # idx = np.where(np.in1d(wave, selected_waves))[0]
-        # n = n_re[idx] + 1j*n_im[idx]
-        # eps = eps_c[idx] + 1j*eps_c[idx]
+            idx = np.where(np.in1d(wave, selected_waves))[0]
+            n = n_re[idx] + 1j*n_im[idx]
+            eps = eps_c[idx] + 1j*eps_c[idx]
         return n, eps
 
     def qi(self, ri):
@@ -309,62 +306,73 @@ class Photothermal_Image:
         zR = self.zR()
         zp = self.zp()
         if which == 'sin': 
-            const2 = 0.0183
-            const1 = 0.366
+            c_lin = 0.0366
+            c_quad = 0.0183
         if which == 'cos': 
-            const2 = 0.0263
-            const1 = 0.053
+            c_lin = 0.0525
+            c_quad = 0.0263
         if self.kind == 'gold_sph_QS' or self.kind == 'gold_sph_MW':
             V = 4/3*np.pi*self.radius**3
         else:
             V = 4/3*np.pi*self.shell_radius**3
         guoy = 1/np.sqrt(1+(-zp/zR)**2) + 1j*(-zp/zR)/np.sqrt(1+(-zp/zR)**2)
-        probe_signal = 8*np.pi*self.f_thph*self.nb_T0/(self.wave_probe*w_probe**2)*\
-                    1/np.sqrt(1+(zp/zR)**2)*self.Pabs()*self.rth**2/self.kappa*\
-                    np.imag(-1*guoy*np.conj(self.dalphadn_atT0())*const1/V\
-                    )
+        th=0; ph=0
+        f_thph = np.sin(th)**2 * np.cos(ph)**2 - 1
+        interf_term = 4*k*f_thph/(w_probe**2*np.sqrt(1+(zp/zR)**2))*\
+                      np.imag(guoy*np.conj(self.dalphadn_atT0()))*\
+                      self.Pabs()*self.rth**2/(self.kappa*V)*c_lin
 
-        self_constant = 16*np.pi**2*self.g_thph*self.nb_T0**2/(self.wave_probe**2*w_probe**4)*\
-                    1/(1+(zp/zR)**2)*self.Pabs()*self.rth**2/(V*self.kappa)
+        scatt_term1 = k**4/(zR**2+zp**2)*\
+                     2*np.real(np.conj(self.alpha_atT0())*self.dalphadn_atT0())*\
+                     self.Pabs()*self.rth**2/(self.kappa*V)*c_lin
+                     
+        scatt_term2 = k**4/(zR**2+zp**2)*\
+                      np.abs(self.dalphadn_atT0())**2*\
+                     (self.Pabs()*self.rth**2/(self.kappa*V))**2*c_quad
 
-        self_signal1 = self_constant*2*np.real( np.conj( self.alpha_atT0() ) * self.dalphadn_atT0() )*const1
-        self_signal2 = self_constant*np.abs(self.dalphadn_atT0())**2 * self.Pabs()*self.rth**2/self.kappa * const2/V
-        return probe_signal, self_signal1, self_signal2, zR
-
-
-# radius=50.E-7
-# waverange = np.round(np.arange(400, 700, 1)*1E-7, 7)
-# pump = np.array([532.E-7])
-# probe = 785.E-7
-# whichalpha='coreshell_MW'
-# nTOT_abs=10
-# nTOT_sca=1
-# power = 500 # microWatts
-
-# mt_single = Mie_Theory(radius, pump)
-# abs_cross, _, _ = mt_single.cross_sects(nTOT=nTOT_abs)
-
-# pt = Photothermal_Image(radius, np.round(pump,7), abs_cross, 
-#                         power*10, np.round(probe,7), whichalpha)
-
-# print('Sin')
-# PI_sin, SI1_sin, SI2_sin, _ = pt.pt_signal(which='sin')
-# print('Cos')
-# PI_sin, SI1_sin, SI2_sin, _ = pt.pt_signal(which='cos')
+        return interf_term, scatt_term1, scatt_term2, zR
 
 
+    # def pt_signal_unnormalized(self, which)
+
+
+    def h_minus_r(self,which):
+        # w_probe = self.waist(wave=self.wave_probe) # cm
+        k = self.convert_k(self.wave_probe) # cm^-1
+        # zR = self.zR()
+        # zp = self.zp()
+        # if self.kind == 'gold_sph_QS' or self.kind == 'gold_sph_MW':
+        #     V = 4/3*np.pi*self.radius**3
+        # else:
+        #     V = 4/3*np.pi*self.shell_radius**3
+        # guoy = 1/np.sqrt(1+(-zp/zR)**2) + 1j*(-zp/zR)/np.sqrt(1+(-zp/zR)**2)
+        G = k**2*np.exp(1j*k*r)/r
+        # T = 
+        alpha_H = self.alpha_atT0() + self.dalphadn_atT0()*T
+        EH = G*alpha_H*E_atNP
+        ER = G*alpha_R*E_atNP
+        return c*self.nb_T0/(8*np.pi)*( np.abs(EH)**2 - np.abs(ER)**2 + \
+                2*np.real(np.dot(Epr, np.conj(EH-HR)) ) )
 
 
 
 
 #####################################################################################
 #####################################################################################
+#####################################################################################
+#####################################################################################
+
 class Plot_Everything:
     def __init__(self, 
                     radius, 
                     ):
         self.radius = radius
 
+
+
+############################################################################################################
+###### Photothermal Spectra ########
+############################################################################################################
     def pi_si_terms(self, 
                     wave_pump, 
                     wave_probe, 
@@ -376,16 +384,16 @@ class Plot_Everything:
                     ax,
                     plot_self_diff, # True = two self terms, False = added together
                     sep_sincos,
-                    waverange=np.round(np.arange(400, 700, 1)*1E-7, 7)
+                    waverange=np.round(np.arange(400, 700, 1)*1E-7, 7),
+                    define_zp=np.array([]),
                     ):
-
         radius = self.radius
         for idx, rad_val in enumerate(radius):
             mt_single = Mie_Theory(rad_val, wave_pump)
             abs_cross, _, _ = mt_single.cross_sects(nTOT=nTOT_abs)
             ############################################################
             pt = Photothermal_Image(rad_val, np.round(wave_pump,7), abs_cross, 
-                                    power*10, np.round(wave_probe,7), whichalpha)
+                                    power*10, np.round(wave_probe,7), whichalpha, define_zp)
             PI_sin, SI1_sin, SI2_sin, _ = pt.pt_signal(which='sin')
             PI_cos, SI1_cos, SI2_cos, _ = pt.pt_signal(which='cos')
             total_signal = np.sqrt( (PI_sin + SI1_sin + SI2_sin)**2 + (PI_cos + SI1_cos + SI2_cos)**2)
@@ -448,66 +456,250 @@ class Plot_Everything:
 
 
 
-    # def sweep_zp(self, 
-    #                 wave_pump, 
-    #                 wave_probe, 
-    #                 whichalpha, 
-    #                 nTOT, 
-    #                 power, 
-    #                 fig, 
-    #                 ax,
-    #                 zp,
-    #                 waverange=np.round(np.arange(400, 700, 1)*1E-7, 7)
-    #                 ):
-    #     for idx, val_rad in enumerate(self.radius):
-    #         mt_single = Mie_Theory(val_rad, wave_pump)
-    #         abs_cross, _, _ = mt_single.cross_sects(nTOT=nTOT)
-    #         pt = Photothermal_Image(val_rad, wave_pump, np.array([abs_cross]),
-    #                                 power*10, wave_probe, whichalpha, zp)
-     
-    #         PI_sin, SI1_sin, SI2_sin, zR = pt.pt_signal(which='sin')
-    #         PI_cos, SI1_cos, SI2_cos, _ = pt.pt_signal(which='cos')
-    #         sinterm = PI_sin[0,:] + SI1_sin[0,:] + SI2_sin[0,:] 
-    #         costerm = PI_cos[0,:] + SI1_cos[0,:] + SI2_cos[0,:] 
-    #         self_int = SI1_sin[0,:] + SI2_sin[0,:] + SI1_cos[0,:] + SI2_cos[0,:]
-    #         probe_int = PI_sin[0,:] + PI_cos[0,:]
-    #         total_signal = np.sqrt( sinterm**2 + costerm**2 )
-        
-    #         min_idx_sig = np.where(total_signal == min(total_signal))
-    #         max_idx_si = np.where(self_int == max(self_int))
+############################################################################################################
+######### Sweep zp #################
+############################################################################################################
+    def sweep_zp(self, 
+                wave_pump, 
+                wave_probe, 
+                whichalpha, 
+                nTOT, 
+                power, 
+                fig, 
+                ax,
+                zp,
+                ):
+        for idx, val_rad in enumerate(self.radius):
+            mt_single = Mie_Theory(val_rad, wave_pump)
+            abs_cross, _, _ = mt_single.cross_sects(nTOT=nTOT)
+            pt = Photothermal_Image(val_rad, wave_pump, abs_cross,
+                                    power*10, wave_probe, whichalpha, zp)
+            PI_sin, SI1_sin, SI2_sin, _ = pt.pt_signal(which='sin')
+            PI_cos, SI1_cos, SI2_cos, _ = pt.pt_signal(which='cos')
+            total_signal = np.sqrt( (PI_sin + SI1_sin + SI2_sin)**2 + (PI_cos + SI1_cos + SI2_cos)**2)
+            ax[idx].plot(zp*1E7, total_signal,
+                    'k', linewidth=1.5)
+            ax[idx].axhline(0,color='k',linewidth=1)
+            ax[idx].axvline(0,color='k',linewidth=1)
+            ax[idx].set_title(str('r = ')+str(int(np.round(val_rad*1E7)))+str(' nm'))
+        plt.subplots_adjust(left=.05, bottom=.2, right=.95, 
+                        top=.8, wspace=.6,hspace=.2) 
+        fig.savefig(str('sweep_zp.png'), 
+            dpi=500, bbox_inches='tight'
+            )
+        plt.show()
 
-    #         ax[0, idx].plot(zp*1E7, total_signal,
-    #                 'k', linewidth=1.5)
-    #         ax[0, idx].plot(zp*1E7, probe_int,
-    #                 'tab:blue',
-    #                 linewidth=1.5,)
-    #         ax[0, idx].plot(zp*1E7, self_int,
-    #                 'tab:red',
-    #                 linewidth=1.5,)
 
-    #         ax[0, idx].axhline(0,color='k',linewidth=1)
-    #         ax[0, idx].axvline(0,color='k',linewidth=1)
-    #         ax[0, idx].set_title(str('r = ')+str(int(np.round(val_rad*1E7)))+str(' nm'))
 
-    #     #     ax[1, idx].plot(zp*1E7, total_signal,
-    #     #             'k', linewidth=1.5)
-    #     #     ax[1, idx].plot(zp*1E7, np.arctan2(sinterm, costerm),
-    #     #             'tab:purple')
-    #     #     ax[1, idx].axhline(0,color='k',linewidth=1)
-    #     #     ax[1, idx].axvline(0,color='k',linewidth=1)
 
-    #     #     ax[1, idx].set_xlabel('$z_p$ [nm]')
-    #     #     # Draw zR
-    #     #     ax[0, idx].axvline(-zR*1E7, color='magenta', linewidth=1)
-    #     #     ax[0, idx].axvline(zR*1E7, color='lime',linewidth=1)
-    #     #     ax[1, idx].axvline(-zR*1E7, color='magenta',linewidth=1)
-    #     #     ax[1, idx].axvline(zR*1E7, color='lime',linewidth=1)
+############################################################################################################
+###### zp Spectrum Images #########
+############################################################################################################
+    def sweep_zp_image(self, 
+                    wave_pump, 
+                    wave_probe, 
+                    whichalpha, 
+                    nTOT, 
+                    power, 
+                    fig, 
+                    ax,
+                    zp,
+                    scalemin=0,
+                    scalemax=1,
+                    ):
+        radius=self.radius
+        if len(wave_pump) > 1:
+            wavesweep = wave_pump
+            ax.set_xlabel('Pump Wavelength [nm]')
+        if len(wave_pump) == 1:
+            wavesweep = wave_probe
+            ax.set_xlabel('Probe Wavelength [nm]')
+        if len(wave_pump) > 1 & len(wave_probe) > 1:
+            ax.set_xlabel('Pump and Probe Wavelength [nm]')
 
-    #     plt.xlim([min(zp)*1E7, max(zp)*1E7])
-    #     plt.xticks([-1500, 0, 1500])
-    #     plt.subplots_adjust(left=.05, bottom=.2, right=.95, 
-    #                     top=.8, wspace=.6,hspace=.2) 
 
+
+        total_signal = np.zeros((len(zp), len(wavesweep)))
+        for idx, val_zp in enumerate(zp):
+            mt_single = Mie_Theory(radius, wave_pump)
+            abs_cross, _, _ = mt_single.cross_sects(nTOT=nTOT)
+            pt = Photothermal_Image(radius, wave_pump, abs_cross,
+                                    power*10, wave_probe, whichalpha, np.array([val_zp]))
+            PI_sin, SI1_sin, SI2_sin, _ = pt.pt_signal(which='sin')
+            PI_cos, SI1_cos, SI2_cos, _ = pt.pt_signal(which='cos')
+            total_signal[idx,:] = np.sqrt( (PI_sin + SI1_sin + SI2_sin)**2 + (PI_cos + SI1_cos + SI2_cos)**2)
+        idx_max = np.where(total_signal == np.max(total_signal))
+        print('Global maximum at zp:', int(np.round(zp[idx_max[0]][0]*1E7)),\
+            'nm, wavelength:', int(np.round(wave_pump[idx_max[1]][0]*1E7)), 'nm')
+        im = ax.imshow(total_signal,
+                extent=[min(wavesweep)*1E7,max(wavesweep)*1E7,min(zp)*1E7,max(zp)*1E7],
+                cmap=plt.get_cmap('RdPu'),
+                aspect='auto',
+                vmin=0+scalemin,
+                vmax=np.max(total_signal)*scalemax,
+                )
+        ax.set_ylabel('$z_p$ [nm]')
+        plt.colorbar(im,ax=ax,label='PT Signal')
+        ax.set_title(str('r = ')+str(int(np.round(radius*1E7)))+str(' nm'))
+        plt.subplots_adjust(left=.2)
+        fig.savefig(str('zp_image.png'), 
+            dpi=500, bbox_inches='tight'
+            )
+        plt.show()
+
+
+
+
+############################################################################################################
+###### zp Find Max #########
+############################################################################################################
+    def sweepwave_atzpmax(self, 
+                wave_pump, 
+                wave_probe, 
+                whichalpha, 
+                nTOT_abs, 
+                nTOT_sca,                
+                power, 
+                fig, 
+                ax,
+                plot_scatt_diff, # True = two self terms, False = added together
+                sep_sincos,
+                include_zpmax,
+                waverange=np.round(np.arange(450, 700, 5)*1E-7, 7),
+                zp=np.arange(-1000, 1000, 10)*1E-7,
+                ):
+        radius = self.radius
+        if include_zpmax == True:
+            fig_zp, ax_zp = plt.subplots(1, 5, figsize=(9.3,1.8),sharex=True)
+
+        if len(wave_pump) > 1:
+            wave_pump_array = wave_pump
+            wave_probe_array = np.zeros(len(waverange))+wave_probe
+            ax[0].set_xlabel('Pump Wavelength [nm]')
+        if len(wave_pump) == 1:
+            wave_pump_array = np.zeros(len(waverange))+wave_pump
+            wave_probe_array = wave_probe
+            ax[0].set_xlabel('Probe Wavelength [nm]')
+        if len(wave_pump) > 1 & len(wave_probe) > 1:
+            wave_probe_array = wave_pump
+            wave_probe_array = wave_probe
+            ax[0].set_xlabel('Pump and Probe Wavelength [nm]')
+        ############################################################
+        ### Loop Through the Radii ###
+        for idxr, rad_val in enumerate(radius):
+            total_signal_max = np.zeros(len(waverange))
+            ISIN_max = np.zeros(len(waverange))
+            ICOS_max = np.zeros(len(waverange))
+            S1SIN_max = np.zeros(len(waverange))
+            S2SIN_max = np.zeros(len(waverange))
+            S1COS_max = np.zeros(len(waverange))
+            S2COS_max = np.zeros(len(waverange))
+            zp_max = np.zeros(len(waverange))
+            ############################################################
+            #### Plot Mie Theory ####
+            mt = Mie_Theory(rad_val, waverange)
+            abs_cross_MIE, _, _ = mt.cross_sects(nTOT=nTOT_abs)
+            _, sca_cross_MIE, _ = mt.cross_sects(nTOT=nTOT_sca)
+            ax[idxr].fill_between(waverange*1E7, sca_cross_MIE, 
+                             color='mediumpurple',zorder=0, alpha=.6)
+            ax[idxr].fill_between(waverange*1E7, abs_cross_MIE, 
+                             color='gray',zorder=1, alpha=.6)
+            idx_abs = np.where(abs_cross_MIE == max(abs_cross_MIE))
+            max_abs = waverange[idx_abs]
+            idx_sca = np.where(sca_cross_MIE == max(sca_cross_MIE))
+            max_sca = waverange[idx_sca]
+            ax[idxr].plot(np.array([max_abs, max_abs])*1E7, 
+                np.array([-1, 1]), color='k', linewidth=0.75, linestyle='dashed')
+            ax[idxr].plot(np.array([max_sca, max_sca])*1E7, 
+                np.array([-1, 1]), color='k', linewidth=0.75, linestyle='dashed')
+            ############################################################
+            ### Format Figure ###
+            if max(sca_cross_MIE) > max(abs_cross_MIE): whichbig = sca_cross_MIE
+            if max(sca_cross_MIE) < max(abs_cross_MIE): whichbig = abs_cross_MIE
+            ax[idxr].set_ylim([0, max(whichbig)*1.1])
+            ax[idxr].set_xlim(450, 700)
+            ax[idxr].set_title(str('r = ')+str(int(np.round(rad_val*1E7)))+str(' nm'), pad=20)
+            ax[idxr].set_yticks([0, max(whichbig)])
+            yfmt = ScalarFormatterForceFormat()
+            yfmt.set_powerlimits((0,0))
+            ax[idxr].yaxis.set_major_formatter(yfmt)
+            ############################################################
+            #### Find zp to Maximize PT ####
+            for idxw, val_wave in enumerate(waverange):
+                mt_single = Mie_Theory(rad_val, np.array([wave_pump_array[idxw]]))
+                abs_cross, _, _ = mt_single.cross_sects(nTOT=nTOT_abs)
+                pt = Photothermal_Image(rad_val, np.array([wave_pump_array[idxw]]),
+                                         abs_cross, power*10, wave_probe_array[idxw], 
+                                         whichalpha, zp)
+                I_sin, S1_sin, S2_sin, _ = pt.pt_signal(which='sin')
+                I_cos, S1_cos, S2_cos, _ = pt.pt_signal(which='cos')
+                total_signal = np.sqrt( (I_sin + S1_sin + S2_sin)**2 + 
+                                       (I_cos + S1_cos + S2_cos)**2)
+                zp_idx_max = np.where(total_signal == max(total_signal))
+                zp_max[idxw] = zp[zp_idx_max]
+                total_signal_max[idxw] = total_signal[zp_idx_max]
+                ISIN_max[idxw] = I_sin[zp_idx_max]
+                ICOS_max[idxw] = I_cos[zp_idx_max]
+                S1SIN_max[idxw] = S1_sin[zp_idx_max]
+                S2SIN_max[idxw] = S2_sin[zp_idx_max]
+                S1COS_max[idxw] = S1_cos[zp_idx_max]
+                S2COS_max[idxw] = S2_cos[zp_idx_max]
+            ############################################################
+            #### Plot Photothermal ####
+            ax2 = ax[idxr].twinx()
+            ax2.plot(waverange*1E7, total_signal_max,'k', zorder=2,linewidth=1.5)
+            if sep_sincos == False:
+                ax2.plot(waverange*1E7, ISIN_max+ICOS_max,'tab:blue',linewidth=1.5,zorder=0)
+                if plot_scatt_diff == True:
+                    ax2.plot(waverange*1E7, S1SIN_max+S1COS_max,'tab:green',linewidth=1.5,zorder=0)
+                    ax2.plot(waverange*1E7, S2SIN_max+S2COS_max,'tab:orange',linewidth=1.5,zorder=0)
+                if plot_scatt_diff == False:
+                    ax2.plot(waverange*1E7, S1SIN_max+S1COS_max+S2SIN_max+S2COS_max,'tab:red',linewidth=1.5,zorder=0)
+            if sep_sincos == True:
+                ax2.plot(waverange*1E7, ISIN_max,'tab:blue',linewidth=1.5,zorder=0)
+                ax2.plot(waverange*1E7, ICOS_max,'tab:orange',linewidth=1.5,zorder=0)
+                ax2.plot(waverange*1E7, S1SIN_max,'tab:green',linewidth=1.5,zorder=0)
+                ax2.plot(waverange*1E7, S1COS_max,'tab:red',linewidth=1.5,zorder=0)
+                ax2.plot(waverange*1E7, S2SIN_max,'tab:purple',linewidth=1.5,zorder=0)
+                ax2.plot(waverange*1E7, S2COS_max,'tab:brown',linewidth=1.5,zorder=0)
+            # ax2.set_ylim([0, np.round(max(total_signal_max),1)])
+            ax2.set_yticks([0, np.round(max(total_signal_max),1)])
+
+
+            if include_zpmax == True:
+                ax_zp[idxr].plot(waverange*1E7, zp_max*1E7)
+                ax_zp[idxr].set_title(str('r = ')+str(int(np.round(rad_val*1E7)))+str(' nm'), pad=20)
+                ax_zp[idxr].set_ylabel('$z_p$ [nm]')
+
+        fig.subplots_adjust(left=.05, bottom=.2, right=.95, 
+                            top=.8, wspace=.75) 
+
+
+        fig_zp.subplots_adjust(left=.05, bottom=.2, right=.95, 
+                            top=.8, wspace=.75) 
+
+
+        fig.savefig(str('sweep_atzpmax.png'), 
+            dpi=500, bbox_inches='tight')
+
+
+
+
+        fig_zp.savefig(str('sweep_atzpmax_showzp.png'), 
+            dpi=500, bbox_inches='tight')
+
+
+
+
+
+
+
+
+
+
+############################################################################################################
+###### Sweep Power #########
+############################################################################################################
     def sweep_power(self, 
                 wave_pump, 
                 wave_probe, 
@@ -558,48 +750,26 @@ class Plot_Everything:
 
 
 
-    # def sweep_power_zpdiff():
-    #     fig, ax = plt.subplots(1, 1, figsize=(2.8,2.8),sharex=True)
-    #     waverange = np.round(np.arange(450, 700, 1)*1E-7, 7)
-    #     whichalpha='coreshell_MW'
-    #     nTOT = 10
-    #     power_range = np.arange(0, 1001, 100) # microwatts
-    #     radius = 75.*1E-7
-    #     total_signal = np.zeros((3, len(power_range)))
 
-    #     wave_pump = np.array([532.E-7])
-    #     mt_single = Mie_Theory(radius, wave_pump)
-    #     abs_cross, _, _ = mt_single.cross_sects(nTOT=nTOT)
 
-    #     pt = Photothermal_Image(radius, wave_pump, np.array([abs_cross]),
-    #                             200*10, 785.E-7, whichalpha)
-    #     _, _, zR = pt.pt_signal(which='sin')
 
-    #     colors = ['magenta', 'black', 'lime']
-    #     legendlabels = ['-zR', '0', 'zR']
-    #     zR_range = np.array([-zR, 0, zR])
-    #     for idx_zR, val_zR in enumerate(zR_range):
-    #         for idx_p, val_pow in enumerate(power_range):
-    #             pt = Photothermal_Image(radius, wave_pump, np.array([abs_cross]),
-    #                                     val_pow*10, 785.E-7, whichalpha, np.array([val_zR]))
-    #             PI_sin, SI_sin, _ = pt.pt_signal(which='sin')
-    #             PI_cos, SI_cos, _ = pt.pt_signal(which='cos')
-    #             total_signal[idx_zR, idx_p] = np.sqrt( (PI_sin + SI_sin)**2 + (PI_cos + SI_cos)**2)
-    #         plt.plot(power_range, total_signal[idx_zR,:], color=colors[idx_zR], label=legendlabels[idx_zR])
 
-    #     plt.axvline(200)
+#### SPECTRA ####
+# fig, ax = plt.subplots(1, 4, figsize=(6,4),sharex=True)
+# pe = Plot_Everything(radius)
+# radius = np.array([10, 20, 30, 60])*1E-7
+# pump = np.array([532.E-7])
+# pe.sweep_zp(pump, probe, whichalpha, nTOT_abs, power, fig, ax, zp)
 
-    #     plt.ylabel('PT Signal')
+#### IMAGE ####
+# fig, ax = plt.subplots(1, 1, figsize=(6,4),sharex=True)
+# radius = 50*1E-7
+# waverange = np.round(np.arange(400, 700, 10)*1E-7, 7)
+# zp = np.arange(-1000, 1000, 10)*1E-7
+# pump = np.array([532.E-7])#waverange
+# probe = waverange#785.E-7
+# pe = Plot_Everything(radius)
+# pe.sweep_zp_image(pump, probe, whichalpha, nTOT_abs, power, fig, ax, zp)
 
-    #     plt.xlabel('Power [$\mu$W]')
-    #     plt.xlim([0, 1000])
-    #     # plt.ylim([0, 1.1])
-    #     plt.legend(frameon=False)
-    #     plt.subplots_adjust(left=.2, bottom=.2)
-    #     fig.savefig('power_zR_diff.png',
-    #         dpi=500, bbox_inches='tight'
-    #         )
 
-    #     plt.show()
 
-    # # sweep_power_zpdiff()
