@@ -46,19 +46,16 @@ end
 
 %%  comparison with Mie theory
 clear;clc;
-for radius = 5:100:10
-    op = bemoptions( 'sim', 'ret', 'waitbar', 0, 'interp', 'curv' );
-    enei = linspace( 400, 700, 200 );
-    nmsqrd_to_micronsqrd = (10^(-6));
-    
-    mie = miesolver( epstable( 'gold.dat' ), epsconst( 1.473^2 ),  2*(radius), op,'lmax',1);    
+for radius = 10:10:60
+    op =bemoptions( 'sim', 'ret', 'waitbar', 0, 'interp', 'curv' );
+    enei = linspace( 400, 700, 201 );
+    nmsqrd_to_micronsqrd = (10^(-7))^2;
+    mie = miesolver( epstable( ['gold.dat'] ), epsconst( 1.5^2 ),  2*(radius), op, 'lmax', 1);    
     ext = mie.ext( enei )*nmsqrd_to_micronsqrd;
     sca = mie.sca( enei )*nmsqrd_to_micronsqrd;
-    plot( enei, sca/max(sca), '-'  );  hold on;
-    plot( enei, ext/max(ext), '-'  );  hold on;
+    radius
+    plot( enei, ext-sca , '-'  );  hold on;
 
-    legend( 'sca', 'ext' );
-
-%     filename = strcat('Sph',num2str(radius),'nm_JC_ret_l1_n1.473.mat');
-%     save(filename, 'enei', 'ext', 'sca');
+    filename = strcat('Sph',num2str(radius),'nm_BEMMIE_l1_n1.5.mat');
+    save(filename, 'enei', 'ext', 'sca');
 end
