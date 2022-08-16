@@ -1,0 +1,20 @@
+clc;% clf;
+% Mie theory
+clear;clc;
+nb=1.5;
+num_mults=10;
+
+for radius = 10:10:60
+    op =bemoptions( 'sim', 'ret', 'waitbar', 0, 'interp', 'curv' );
+    enei = linspace( 400, 700, 201 );
+    nmsqrd_to_micronsqrd = (10^(-7))^2;
+    mie = miesolver( epstable( ['gold.dat'] ), epsconst( nb^2 ),  2*(radius), op, 'lmax', num_mults);    
+    ext = mie.ext( enei )*nmsqrd_to_micronsqrd;
+    sca = mie.sca( enei )*nmsqrd_to_micronsqrd;
+    radius
+    plot( enei, ext-sca , '-'  );  hold on;
+
+    filename = strcat('Sph',num2str(radius),'nm_BEMMIE_l',num2str(num_mults),'_n1.5.mat');
+    save(filename, 'enei', 'ext', 'sca');
+end
+

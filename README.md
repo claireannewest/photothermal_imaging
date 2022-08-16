@@ -1,6 +1,6 @@
-# Confocal Photothermal Imaging Pipeline
+# Photothermal Imaging Pipeline
+This pipeline will create a photothermal image from a nanoparticle using the discrete dipole approximation. 
 
-This is set up to create a photothermal image of a single spherical nanoparticle. 
 
 ## Instructions to Make Photothermal Image 
 1. Update `parameters.py` to adjust the shape, materials involved (metal, background, substrate refractive indices and thermal conductivities), laser parameters, and imaging conditions.  

@@ -111,7 +111,8 @@ class Photothermal_Image:
                     wave_probe,
                     kind,
                     nb_T0,
-                    define_zp=np.array([]),
+                    delta_z, 
+                    zprobe_focus,
                     ):
         """Defines the different system parameters.
 
@@ -126,8 +127,9 @@ class Photothermal_Image:
         self.P0h = P0h # erg/s 
         self.wave_probe = wave_probe # cm
         self.kind = kind
-        self.define_zp = define_zp 
         self.nb_T0 = nb_T0
+        self.delta_z = delta_z
+        self.zprobe_focus = zprobe_focus
         self.kappa = 0.6*(1E7/100) # erg/ (s cm K)
         self.C = (1.26*2.35*1E7) # erg / (cm^3 K)
         self.Omega = 1E5 # 1/s (100 kHz)
@@ -135,23 +137,21 @@ class Photothermal_Image:
         self.shell_radius = self.rth 
         self.dnbdT = -10**(-4)
 
-    def waist(self, wave): # [cm]
-        # if wave == self.wave_pump: return 360*1E-7
-        # if wave == self.wave_probe: return 630*1E-7
+    def waist_at_focus(self, wave):
         NA = 1.25
-        return wave * 0.6 / NA 
+        return wave * 0.6 / NA
+
+    def waist_at_z(self, wave, z, z_at_focus): # [cm]
+        waist_at_focus = self.waist_at_focus(wave=wave)
+        waist_z = waist_at_focus*np.sqrt(1+( (z-z_at_focus)/self.zR(wave=wave))**2 )
+        return waist_z
 
     def convert_k(self, wave):
         return 2*np.pi*self.nb_T0/wave
 
-    def zp(self):
-        if len(self.define_zp) == 0:
-            return np.pi*self.waist(wave=self.wave_probe)**2*self.nb_T0/self.wave_probe
-        else:
-            return self.define_zp
-
-    def zR(self):
-        return np.pi*self.waist(self.wave_probe)**2*self.nb_T0/self.wave_probe
+    def zR(self, wave):
+        waist_at_focus = self.waist_at_focus(wave=wave)
+        return np.pi*waist_at_focus**2*self.nb_T0/wave
 
     def eps_gold_room(self, selected_waves,drude=False):
         JCdata = np.loadtxt('auJC_interp.tab',skiprows=3)
@@ -161,19 +161,6 @@ class Photothermal_Image:
         idx = np.where(np.in1d(wave, selected_waves))[0]
         n = n_re[idx] + 1j*n_im[idx]
         eps = n_re[idx]**2 - n_im[idx]**2 +1j*(2*n_re[idx]*n_im[idx])
-        if drude == True:
-            drude = np.loadtxt('agDrudeFit_101421.tab',skiprows=3)
-            wave = np.round(drude[:,0]*1E-4,7) # cm
-            eps_re = drude[:,1]
-            eps_im = drude[:,2]
-            eps_c = eps_re + 1j*eps_im
-            mod_eps_c = np.sqrt(eps_re**2 + eps_im**2)
-            n_re = np.sqrt( (mod_eps_c + eps_re )/ 2)
-            n_im = np.sqrt( (mod_eps_c - eps_re )/ 2)
-
-            idx = np.where(np.in1d(wave, selected_waves))[0]
-            n = n_re[idx] + 1j*n_im[idx]
-            eps = eps_c[idx] + 1j*eps_c[idx]
         return n, eps
 
     def qi(self, ri):
@@ -275,9 +262,9 @@ class Photothermal_Image:
 
     ########################################################
 
-    def dalphadn_atT0(self):
+    def dalphadT_atT0(self):
         ng_T0, _ = self.eps_gold_room(selected_waves=self.wave_probe)
-        dn1_dT = 1E-4 + 1j*1E-4
+        dn1_dT = -1E-4 - 1j*1E-4
         dn2_dT = self.dnbdT
 
         if self.kind == 'glyc_sph_QS':
@@ -309,97 +296,45 @@ class Photothermal_Image:
         return (dgold_dT_atT0*dn1_dT + dglyc_dT_atT0*dn2_dT)
 
     def Pabs(self):
-        w_pump = self.waist(wave=self.wave_pump) # cm
-        I0 = 2*self.P0h/(np.pi*w_pump**2)
-        return self.abs_cross*I0
+        zpump_focus = self.zprobe_focus - self.delta_z
+        waist_at_focus_pump = self.waist_at_focus(wave=self.wave_pump)
+        waist_at_NP_pump = self.waist_at_z(wave=self.wave_pump, z=0, z_at_focus=zpump_focus)
+        I_at_focus = 2*self.P0h/(np.pi*waist_at_focus_pump**2)
+        I = I_at_focus*(waist_at_focus_pump/waist_at_NP_pump)**2
+        return self.abs_cross*I
 
     def pt_signal(self, which, norm, P0_probe=500*10, testing=False):
         ''' Photothermal Signal
         which: 'sin' or 'cos'
         norm: True or False. True = normalize it as usual, False = don't normalize it
         '''
-        w_probe = self.waist(wave=self.wave_probe) # cm
+        waist_at_focus_probe = self.waist_at_focus(wave=self.wave_probe)
         k = self.convert_k(self.wave_probe) # cm^-1
-        zR = self.zR()
-        zp = self.zp()
-        if which == 'sin': 
-            c_lin = 0.0366
-            c_quad = 0.0183
-        if which == 'cos': 
-            c_lin = 0.0525
-            c_quad = 0.0263
+        zR = self.zR(wave=self.wave_probe)
+        zp = self.zprobe_focus
+        I1 = (np.exp(1) - 2*np.cos(1)) / (4*np.exp(1)) 
+        I2 = (2*np.sin(1) - np.cos(1)) / (4*np.exp(1)) 
+        if which == 'sin': I = I1 
+        if which == 'cos': I = I2
         if self.kind == 'gold_sph_QS' or self.kind == 'gold_sph_MW':
             V = 4/3*np.pi*self.radius**3
         else:
             V = 4/3*np.pi*self.shell_radius**3
-        th=0; ph=0
-        f_thph = 1 - np.sin(th)**2 * np.cos(ph)**2
-        g_thph = f_thph**2
-        guoy = 1/np.sqrt(1+(-zp/zR)**2) + 1j*(-zp/zR)/np.sqrt(1+(-zp/zR)**2)
-        interf_term = 4*k*f_thph/(w_probe**2*np.sqrt(1+(zp/zR)**2))*\
-                      np.imag(guoy*np.conj(self.dalphadn_atT0()))*\
-                      self.Pabs()*self.rth**2/(self.kappa*V)*c_lin
+        guoy = np.exp(1j*np.arctan2(-zp, zR))
+        interf_term = 4*k/(waist_at_focus_probe**2*np.sqrt(1+(zp/zR)**2))*\
+                      np.imag(guoy*np.conj(self.dalphadT_atT0()))*\
+                      self.Pabs()*self.rth**2/(2*self.kappa*V)*I
+
+
         scatt_term1 = k**4/(zR**2+zp**2)*\
-                     2*np.real(np.conj(self.alpha_atT0())*self.dalphadn_atT0())*\
-                     self.Pabs()*self.rth**2/(self.kappa*V)*c_lin
+                     2*np.real(np.conj(self.alpha_atT0())*self.dalphadT_atT0())*\
+                     self.Pabs()*self.rth**2/(2*self.kappa*V)*I
+
+
         scatt_term2 = k**4/(zR**2+zp**2)*\
-                      np.abs(self.dalphadn_atT0())**2*\
-                     (self.Pabs()*self.rth**2/(self.kappa*V))**2*c_quad
-        if norm == False:
-            w_probe = self.waist(wave=self.wave_probe) # cm
-            zR = self.zR()
-            z = 1
-            I0_probe = P0_probe/(np.pi*w_probe**2)
-            E0_probe = np.sqrt(I0_probe*8*np.pi/(c*self.nb_T0))
-            E_ref_sqrd = np.abs(zR/z*E0_probe)**2
-            interf_term = interf_term*E_ref_sqrd
-            scatt_term1 = scatt_term1*E_ref_sqrd
-            scatt_term2 = scatt_term2*E_ref_sqrd
-        if testing == True:
-            return self.abs_cross, self.P0h, V, self.kappa,k, zR, zp, self.rth, self.waist(wave=self.wave_pump),self.waist(wave=self.wave_probe), interf_term, scatt_term1, scatt_term2
+                      np.abs(self.dalphadT_atT0())**2*\
+                     (self.Pabs()*self.rth**2/(2*self.kappa*V))**2*I
+
         return interf_term, scatt_term1, scatt_term2, zR
 
 
-
-    # def h_minus_r(self, P0_probe=500*10):
-    #     w_probe = self.waist(wave=self.wave_probe) # cm
-    #     k = self.convert_k(self.wave_probe) # cm^-1
-    #     zR = self.zR()
-    #     zp = self.zp()
-    #     z=1
-    #     guoy = 1/np.sqrt(1+(-zp/zR)**2) + 1j*(-zp/zR)/np.sqrt(1+(-zp/zR)**2)
-    #     I0_probe = P0_probe/(np.pi*w_probe**2)
-    #     E0 = np.sqrt(I0_probe*8*np.pi/(c*self.nb_T0))
-    #     E_atNP = E0/np.sqrt(1+(zp/zR)**2)*np.exp(-1j*k*zp)*guoy
-    #     r=z
-    #     G = k**2*np.exp(1j*k*r)/r
-    #     T = self.Pabs()/(8*np.pi*self.kappa*self.rth)
-    #     alpha_H = self.alpha_atT0() + self.dalphadn_atT0()*T
-    #     alpha_R = np.zeros(len(alpha_H))+self.alpha_atT0()
-    #     EH = G*alpha_H*E_atNP
-    #     ER = G*alpha_R*E_atNP
-    #     Epr = np.zeros(len(EH))+E0/(z/zR)*np.exp(1j*k*(z-zp))*(-1j)
-    #     return c*self.nb_T0/(8*np.pi)*( np.abs(EH)**2 - np.abs(ER)**2 + \
-    #             2*np.real(np.dot(Epr, np.conj(EH-ER)) ) )
-
-
-
-    def cobri(self, cobri_or_scat, P0_probe=500*10):
-        w_probe = self.waist(wave=self.wave_probe) # cm
-        k = self.convert_k(self.wave_probe) # cm^-1
-        zR = self.zR()
-        zp = self.zp()
-        z=10
-        guoy = 1/np.sqrt(1+(-zp/zR)**2) + 1j*(-zp/zR)/np.sqrt(1+(-zp/zR)**2)
-        I0_probe = P0_probe/(np.pi*w_probe**2)
-        E0 = np.sqrt(I0_probe*8*np.pi/(c*self.nb_T0))
-        E_atNP = E0/np.sqrt(1+(zp/zR)**2)*np.exp(-1j*k*zp)*guoy
-        r=z
-        G = k**2*np.exp(1j*k*r)/r
-        alpha_R = self.alpha_atT0()
-        ER = G*alpha_R*E_atNP
-        Epr = E0/(z/zR)*np.exp(1j*k*(z-zp))*(-1j)
-        if cobri_or_scat == 'cobri':
-            return c*self.nb_T0/(8*np.pi)*(np.abs(Epr + ER)**2 - np.abs(Epr)**2)
-        if cobri_or_scat == 'scat':
-            return c/(self.nb_T0*8*np.pi)*(np.abs(ER)**2)
