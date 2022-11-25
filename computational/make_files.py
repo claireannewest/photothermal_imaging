@@ -2,6 +2,8 @@ import numpy as np
 import sys
 import os
 import shutil
+import copy
+
 
 class Photothermal_Files:
 	def __init__(self):
@@ -30,8 +32,6 @@ class Photothermal_Files:
 		self.r_thermal = int(val[par.index("r_thermal")])
 		self.wave_pump = float(val[par.index("wave_pump")])
 		self.wave_probe = float(val[par.index("wave_probe")])
-		
-
 
 		yrange = np.arange(-self.raster_length/2, self.raster_length/2+1, self.stepsize)
 		zrange = np.arange(-self.raster_length/2, self.raster_length/2+1, self.stepsize)
@@ -263,29 +263,37 @@ class Photothermal_Files:
 		file.close()
 
 		for i in range(0, len(self.ypoints)):
-		    directory = str('raster_data_H/')+str("y")+str(int(self.ypoints[i]))+str("_z")+str(int(self.zpoints[i]))
-		    temps = np.loadtxt(str(directory)+str('/temp.out'))
-		    maxT = int(np.round(np.max(temps[:,4])))
-		    if maxT == 0: 
-		        shutil.copyfile(str(directory)+str('/shape.dat_pump'), str(directory)+str('/shape.dat'))
-		        diel_paths = self.diel_paths_RT
-		    else:
-		        shutil.copyfile('shape.dat_extended', str(directory)+str('/shape.dat'))
-		        diel_paths = [self.diel_paths_RT,
-		                       str('/home/caw97/rds/hpc-work/diels/temp_dep_gold/glyc_')+str(maxT)+str('K.txt')]
-		        
-		    self.write_ddscatpar(	shapefile=str('shape.dat_extended'),
-		    						wavelength=self.wave_probe,
-		                            diel_paths=diel_paths,
-		                            nrfld=0,
-		                            iwrksc=1,
-		                            nplanes=101,
-		                            gauss_center=np.array([self.ypoints[i], self.zpoints[i]])
-		                           )
+			diel_paths = []
+			directory = str('raster_data_H/')+str("y")+str(int(self.ypoints[i]))+str("_z")+str(int(self.zpoints[i]))
+			temps = np.loadtxt(str(directory)+str('/temp.out'))
+			maxT = int(np.round(np.max(temps[:,4])))
+			if maxT == 0: 
+				shutil.copyfile(str(directory)+str('/shape.dat_pump'), str(directory)+str('/shape.dat'))
+				diel_paths = self.diel_paths_RT
+				self.write_ddscatpar(	shapefile=str('shape.dat'),
+							wavelength=self.wave_probe,
+							diel_paths=diel_paths,
+							nrfld=0,
+							iwrksc=1,
+							nplanes=101,
+							gauss_center=np.array([self.ypoints[i], self.zpoints[i]])
+							)
 
-		    os.rename('ddscat.par', str(directory)+str('/ddscat.par'))
-		    
-		    
+			else:
+				shutil.copyfile('shape.dat_extended', str(directory)+str('/shape.dat'))
+				diel_paths = copy.deepcopy(self.diel_paths_RT)
+				diel_paths.append(str("'/home/caw97/rds/hpc-work/diels/temp_dep_gold/glyc_")+str(maxT)+str("K.txt'"))
+				self.write_ddscatpar(	shapefile=str('shape.dat_extended'),
+										wavelength=self.wave_probe,
+										diel_paths=diel_paths,
+										nrfld=0,
+										iwrksc=1,
+										nplanes=101,
+										gauss_center=np.array([self.ypoints[i], self.zpoints[i]])
+										)
+
+			os.rename('ddscat.par', str(directory)+str('/ddscat.par'))
+
 		    
 	def prepare_room_probe_calcs(self):
 	### Prepare folders (including extended shape file and ddscat.par) 

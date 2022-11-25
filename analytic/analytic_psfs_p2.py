@@ -141,6 +141,7 @@ class Photothermal_Image:
         self.kappa = 0.6*(1E7/100) # erg/ (s cm K)
         self.C = (1.26*2.35*1E7) # erg / (cm^3 K)
         self.Omega = 1E5 # 1/s (100 kHz)
+
         self.rth = np.sqrt(2*self.kappa/(self.Omega*self.C))
         self.shell_radius = self.rth 
 
@@ -294,7 +295,7 @@ class Photothermal_Image:
 
 
 
-    def dalphadT_atT0(self):
+    def dalphadT_atT0(self, separate=False):
         ng_T0, _ = self.eps_gold_room(selected_waves=self.wave_probe)
         dn1_dT, dn2_dT = self.find_dnj_dT()
 
@@ -316,15 +317,21 @@ class Photothermal_Image:
 
         if self.kind == 'coreshell_QS':
             dgold_dT_atT0 = self.d_alpha_CS_QS_dn1(n1=ng_T0, n2=self.nb_T0, r1=self.radius, r2=self.shell_radius)
+            
             dglyc_dT_atT0 = self.d_alpha_CS_QS_dn2(n1=ng_T0, n2=self.nb_T0, r1=self.radius, r2=self.shell_radius)
 
         if self.kind == 'coreshell_MW':
             dgold_dT_atT0 = self.d_alpha_CS_MW_dn1(n1=ng_T0, n2=self.nb_T0, r1=self.radius, r2=self.shell_radius,
                                                    q1=self.qi(self.radius), q2=self.qi(self.shell_radius))
+
             dglyc_dT_atT0 = self.d_alpha_CS_MW_dn2(n1=ng_T0, n2=self.nb_T0, r1=self.radius, r2=self.shell_radius,
                                                    q1=self.qi(self.radius), q2=self.qi(self.shell_radius))
 
-        return (dgold_dT_atT0*dn1_dT + dglyc_dT_atT0*dn2_dT)
+        if separate == False:
+            return (dgold_dT_atT0*dn1_dT + dglyc_dT_atT0*dn2_dT)
+
+        if separate == True:
+            return dgold_dT_atT0*dn1_dT, dglyc_dT_atT0*dn2_dT
 
     def Pabs(self):
         zpump_focus = self.zprobe_focus - self.delta_z
@@ -453,13 +460,93 @@ class Photothermal_Image:
         return H_minus_R, Int
 
 
-             
+ ###############################################################
+ ###############################################################
+ ###############################################################
+ ###############################################################
+ ###############################################################
+ ###############################################################
+
+
+    def pt_signal_new(self, which, old_way):
+
+        k = self.convert_k(self.wave_probe) # cm^-1
+        zR = self.zR(wave=self.wave_probe)
+        zp = self.zprobe_focus
+        z = 1; r=z; E0 = 1
+        Omega = self.Omega
+        G = k**2*np.exp(1j*k*r)/r
+        V = 4/3*np.pi*self.rth**3
+        V_tot = V
+        Vth = V
+        E_atNP = E0/np.sqrt(1+(-zp/zR)**2)*np.exp(-1j*k*zp)*np.exp(-1j*np.arctan2(-zp , zR))
+        E_atd = E0/(1j*z/zR)*np.exp(1j*k*(z-zp))
 
 
 
+        dalpha_dn1_dn1_dT, dalpha_dn2_dn2_dT = self.dalphadT_atT0(separate=True)
+        alphaT0 = self.alpha_atT0()
 
 
 
+        A = np.exp(1)
+        B = -np.sin(1)+np.exp(1)-2*np.cos(1)
+        C = -np.cos(1)+2*np.sin(1)
+
+        if which == 'sin': 
+            term = B
+            T1_post_int = self.Pabs()*self.rth / (16*np.pi*self.kappa*(2*self.radius**2 + 2*self.radius*self.rth + self.rth**2))
+            T2_post_int = self.Pabs()*self.rth**2*(np.exp(1)*(2*self.radius**22 + 2*self.radius*self.rth + self.rth**2) - np.exp(self.radius/self.rth)*self.rth*((3*self.radius + 2*self.rth)*np.cos(1 - self.radius/self.rth) +  (-self.radius + self.rth)*np.sin(1 - self.radius/self.rth))) / (8*np.exp(1)*(self.radius**2+(self.radius+self.rth)**2)*V*self.kappa)
+
+            T1T2_postint = (self.Pabs()**2*self.rth*(np.exp(1)*(-self.radius**3 + 2*self.radius**2*self.rth + 3*self.radius*self.rth**2 + self.rth**3) - np.exp(self.radius/self.rth)*self.rth**2*((3*self.radius + 2*self.rth)*np.cos(1 - self.radius/self.rth) + (-self.radius + self.rth)*np.sin(1 - self.radius/self.rth)))) / (32*np.exp(1)*np.pi*self.radius*(2*self.radius**2 + 2*self.radius*self.rth + self.rth**2)*V*self.kappa**2)
+
+            T1quad_post_int = self.Pabs()**2*self.rth / (64*np.pi**2*self.kappa**2*self.radius*(2*self.radius**2 + 2*self.radius*self.rth + self.rth**2))
+            T2quad_post_int = (((self.Pabs()*self.rth)**2*(-self.radius + self.rth)*(self.radius + self.rth)*(np.exp(1)*(2*self.radius**2 + 2*self.radius*self.rth + self.rth**2) -  np.exp(self.radius/self.rth) *self.rth *((3*self.radius + 2*self.rth)*np.cos(1 - self.radius/self.rth) + (-self.radius + self.rth)*np.sin(1 - self.radius/self.rth))))) / (16*np.exp(1)*(2*self.radius**2 + 2*self.radius*self.rth + self.rth**2)*V**2 *self.kappa**2)
+
+
+
+        if which == 'cos': 
+            term = C
+            T1_post_int = self.Pabs()*self.rth*(self.radius + self.rth) / (16*np.pi*self.kappa*self.radius*(2*self.radius**2 + 2*self.radius*self.rth + self.rth**2))
+            T2_post_int = np.exp(-1 + self.radius/self.rth)*self.Pabs()*self.rth**3* ((self.radius - self.rth)*np.cos(1 - self.radius/self.rth) +  (3*self.radius + 2*self.rth)*np.sin(1 - self.radius/self.rth)) /  (8*(self.radius**2 + (self.radius + self.rth)**2)*V*self.kappa)
+
+            T1T2_postint = (self.Pabs()**2*self.rth*(np.exp(1)*(-self.radius + self.rth)*(self.radius + self.rth)**2 + np.exp(self.radius/self.rth)*self.rth**2*((self.radius - self.rth)*np.cos(1 - self.radius/self.rth) + (3*self.radius + 2*self.rth)*np.sin(1 - self.radius/self.rth)))) / (32*np.exp(1)*np.pi*self.radius*(2*self.radius**2 + 2*self.radius*self.rth + self.rth**2)*V*self.kappa**2)
+
+            T1quad_post_int = self.Pabs()**2*self.rth*(self.radius+self.rth) / (64*np.pi**2*self.kappa**2*self.radius**2*(2*self.radius**2 + 2*self.radius*self.rth + self.rth**2))
+            T2quad_post_int = (np.exp(-1 + self.radius/self.rth)*self.Pabs()**2*self.rth**3*(-self.radius + self.rth)*(self.radius + self.rth)*((self.radius - self.rth)*np.cos(1 - self.radius/self.rth) + (3*self.radius + 2*self.rth)*np.sin(1 - self.radius/self.rth))) / (16*(2*self.radius**2 + 2*self.radius*self.rth + self.rth**2)*V**2*self.kappa**2)
+
+        
+
+        ######################################################
+        ################## Old Way ##################
+        ######################################################
+        T_post_int = self.Pabs()*self.rth**2/(8*np.exp(1)*self.kappa*V_tot)*term
+        Tquad_post_int =  self.Pabs()**2*self.rth**4/(16*np.exp(1)*self.kappa**2*Vth**2)*term
+
+        if old_way==True:
+            time_int_alpha = (dalpha_dn1_dn1_dT + dalpha_dn2_dn2_dT)*T_post_int
+            time_int_dalphadT_T = (dalpha_dn1_dn1_dT + dalpha_dn2_dn2_dT)*T_post_int
+            time_int_dalphadT_T_sqrd = (np.abs(dalpha_dn1_dn1_dT)**2 + np.abs(dalpha_dn2_dn2_dT)**2)*Tquad_post_int
+
+        
+        ######################################################
+        ################## New Way ##################
+        ######################################################
+        if old_way==False:
+            time_int_alpha = dalpha_dn1_dn1_dT*T1_post_int + dalpha_dn2_dn2_dT*T2_post_int
+            time_int_dalphadT_T = dalpha_dn1_dn1_dT * T1_post_int + dalpha_dn2_dn2_dT * T2_post_int
+            time_int_dalphadT_T_sqrd = np.abs(dalpha_dn1_dn1_dT)**2  * T1quad_post_int + np.abs(dalpha_dn2_dn2_dT)**2 * T2quad_post_int + 2*np.real(dalpha_dn1_dn1_dT*dalpha_dn2_dn2_dT*T1T2_postint)
+
+
+        Phiint = 2*np.real(E_atd*np.conj(G*time_int_alpha*E_atNP)) / np.abs(E_atd)**2
+
+        Phisca = np.real(np.abs(G)**2*np.abs(E_atNP)**2 * (
+                        2*np.real(alphaT0*np.conj(time_int_dalphadT_T)) +  time_int_dalphadT_T_sqrd  ) / np.abs(E_atd)**2)
+
+
+        phi_int_terms = tuple((np.conj(dalpha_dn1_dn1_dT*T_post_int), np.conj(dalpha_dn2_dn2_dT*T_post_int), np.conj(dalpha_dn1_dn1_dT*T1_post_int), np.conj(dalpha_dn2_dn2_dT*T2_post_int)))
+        sca_int_terms = tuple((np.abs(dalpha_dn1_dn1_dT)**2  * T1quad_post_int, np.abs(dalpha_dn2_dn2_dT)**2 * T2quad_post_int, np.abs(dalpha_dn1_dn1_dT)**2*Tquad_post_int, np.abs(dalpha_dn2_dn2_dT)**2*Tquad_post_int))
+        return Phiint, Phisca, phi_int_terms, sca_int_terms
 
 
 
